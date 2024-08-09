@@ -1,0 +1,7 @@
+@import url("../page.css");
+/* TODO ^ combine ../index.css and ../page.css into 1 file */
+
+.content {
+	max-width: 47rem;
+}
+

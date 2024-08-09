@@ -1,0 +1,172 @@
+html {
+	height: 100%;
+	background-color: #f2f2f2;
+}
+
+body {
+	margin: 0;
+	display: flex;
+	align-items: center;
+	font-family: Sans-Serif; 
+	flex-direction: column;
+}
+
+hr {
+	width: 50%;
+}
+
+p {
+	font-size: 1.1rem;
+}
+
+table {
+	border-collapse: collapse;
+	width: 50%;
+	margin: auto;
+}
+
+th, td {
+	border: 1px solid black;
+	padding: 8px;
+	text-align: center;
+}
+
+.title-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	text-align: center;
+}
+
+.post-content {
+	width: 30%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+}
+
+.post {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	text-align: center;
+	text-decoration: none;
+	color: black; 
+	border: 0.3rem solid #4d4dff;
+	border-radius: 0.4rem;
+	padding: 0.7rem 0.3rem 0.3rem 0.3rem;
+	margin-bottom: 2rem;
+	width: 100%;
+	background-color: #f2f2f2;
+}
+
+.post img {
+	width: 85%;
+}
+
+.content {
+	height: 100%;
+	max-width: 40rem;
+	overflow: hidden;
+	padding: 0.5rem 0.5rem 2rem 0.5rem;
+	word-wrap: break-word;
+	line-height: 1.5rem;
+}
+
+.content-head {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+}
+
+.nav-bar {
+	background-color: #101010;
+	list-style-type: none;
+	width: 100%;
+	height: 50px;
+  	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+.nav-li {
+	display: flex;
+	align-items: center;
+	height: 100%;
+}
+
+.nav-li-right {
+	float: left;
+	margin-left: 20%;
+}
+
+.nav-li-left {
+	float: right;
+	margin-right: 20%;
+}
+
+.nav-a {
+	color: #f2f2f2;
+	text-decoration: none;
+	padding-left: 12px;
+	padding-right: 12px;
+	font-size: 1.2rem;
+}
+
+.nav-a:hover {
+	color: #aaaaaa;
+}
+
+.sim-box {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	background-color: #101010;
+	width: 100%;
+	height: 50rem;
+}
+
+.about-box {
+	position: absolute;
+	width: 30%;
+	height: 70%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	text-align: center;
+	text-shadow: 2px 2px #101010;
+}
+
+.about-name {
+	color: white;
+	font-size: 2rem; 
+	font-weight: bold; 
+}
+
+.about-text {
+	color: white;
+	font-size: 1.2rem;
+}
+
+
+.img-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+}
+
+/* figure names */
+.img-container div {
+	color: #666666;
+}
+
+.header-text {
+	color: #999999;
+}
