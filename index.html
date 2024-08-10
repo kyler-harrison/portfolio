@@ -4,22 +4,27 @@
 		<title>Kyler Harrison</title>
 		<link href="page.css" rel="stylesheet" type="text/css">
 	</head>
-	<body>
+	<body style="overflow-x: hidden">
 		<div id="sim-box" class="sim-box">
 			<canvas id="sim-canvas" width="900rem"></canvas>
-			<div class="about-box">
-				<div class="about-name">Kyler Harrison</div>
-                <p class="about-text">Hello there. I'm interested in all aspects of data science, machine learning, and computational physics.</p>
-                <hr style="width: 100%;">
+			<div class="center-box">
+				<div class="center-name">Kyler Harrison</div>
+				<p class="center-text"><i>Computers and physics, at the same time!</i></p>
                 <br>
-				<div class="about-text" style="font-weight: bold; padding: 0 0 2% 0;">Contact me:</div>
-				<div><a class="about-text" style="text-decoration: none; color: #66b3ff;" href="mailto:kylerofharrison@gmail.com" target="_blank">kylerofharrison@gmail.com</a></div>
 			</div>
 		</div>
-		<div class="post-content">
-			<br>
-			<h1 style="color: white">Projects</h1>
-			<br>
+		<div class="content-buttons">
+			<div class="content-button" id="about-button" onclick="contentLoad(event, 'about-content')">About</div>
+			<div class="content-button" id="projects-button" onclick="contentLoad(event, 'post-content')">Projects</div>
+			<div class="content-button" id="contact-button" onclick="contentLoad(event, 'contact-content')">Contact</div>
+		</div>
+		<div class="content-tab about-content">
+			<div class="about-left">IMAGE OF MYSELF</div>
+			<div class="about-right">
+				<p class="about-text">Hello there. I'm Kyler, a guy with a computer who's interested in all aspects of data science, machine learning, and computational physics. I graduated from Purdue University in 2023 with a BSc in Physics and currently work as a data scientist at Centene.</p>
+			</div>
+		</div>
+		<div class="content-tab post-content">
 			<a class="post" href="telescope/nt.html">
 				<img src="telescope/nt_final_crop.jpg">
 				<h2>DIY Newtonian Reflector Telescope</h2>
@@ -37,6 +42,11 @@
 				<h2>Harmonic Oscillators and the Universal Function Approximation Theorem</h2>
 			</a>
 		</div>
+		<div class="content-tab contact-content">
+			<div class="about-text" style="font-weight: bold; padding: 0 0 2% 0;">Contact me:</div>
+			<div><a class="about-text" style="text-decoration: none; color: #66b3ff;" href="mailto:kylerofharrison@gmail.com" target="_blank">kylerofharrison@gmail.com</a></div>
+		</div>
 	</body>
+    <script src="index.js"></script>
     <script src="attractors.js"></script>
 </html>
