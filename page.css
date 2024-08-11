@@ -15,12 +15,6 @@ hr {
 	width: 60%;
 }
 
-/*
-p {
-	font-size: 1.3rem;
-}
-*/
-
 .main-text-container {
 	font-size: 1.3rem;
 	line-height: 2rem;
@@ -46,90 +40,6 @@ th, td {
 	text-align: center;
 }
 
-.post-content {
-	margin-top: 2rem;
-	width: 40rem;
-	display: none;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
-}
-
-.post {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
-	text-align: center;
-	text-decoration: none;
-	color: black; 
-	border: 0.3rem solid #4d4dff;
-	border-radius: 0.4rem;
-	padding: 0.7rem 0.3rem 0.3rem 0.3rem;
-	margin-bottom: 2rem;
-	width: 100%;
-	background-color: #f2f2f2;
-}
-
-.post img {
-	width: 85%;
-}
-
-.content {
-	height: 100%;
-	max-width: 40rem;
-	overflow: hidden;
-	padding: 0.5rem 0.5rem 2rem 0.5rem;
-	word-wrap: break-word;
-	line-height: 1.5rem;
-}
-
-
-.content-head {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: column;
-}
-
-.nav-bar {
-	background-color: #101010;
-	list-style-type: none;
-	width: 100%;
-	height: 5rem;
-  	margin: 0;
-	padding: 0;
-	overflow: hidden;
-}
-
-.nav-li {
-	display: flex;
-	align-items: center;
-	height: 100%;
-}
-
-.nav-li-right {
-	float: left;
-	margin-left: 20%;
-}
-
-.nav-li-left {
-	float: right;
-	margin-right: 20%;
-}
-
-.nav-a {
-	color: #f2f2f2;
-	text-decoration: none;
-	padding-left: 2rem;
-	padding-right: 2rem;
-	font-size: 1.5rem;
-}
-
-.nav-a:hover {
-	color: #aaaaaa;
-}
-
 .sim-box {
 	display: flex;
 	align-items: center;
@@ -140,19 +50,8 @@ th, td {
 	height: 50rem;
 }
 
-.home-text {
-	font-size: 1.5rem;
-	color: #f2f2f2;
-	word-wrap: break-word;
-	line-height: 2rem;
-}
-
 .center-box {
 	position: absolute;
-	/*
-	width: 30%;
-	height: 70%;
-	*/
 	width: 50rem;
 	display: flex;
 	align-items: center;
@@ -160,29 +59,16 @@ th, td {
 	flex-direction: column;
 	text-align: center;
 	text-shadow: 2px 2px #101010;
+	color: #f2f2f2;
 }
 
 .center-name {
-	color: #f2f2f2;
 	font-size: 3rem; 
 	font-weight: bold; 
 }
 
 .center-text {
-	color: #f2f2f2;
 	font-size: 1.5rem;
-}
-
-.contact-content {
-	display: none;
-}
-
-.contact-box {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	text-align: center;
-	flex-direction: column;
 }
 
 .content-buttons {
@@ -229,14 +115,103 @@ th, td {
 	padding-left: 1rem;
 }
 
+.home-text {
+	font-size: 1.5rem;
+	color: #f2f2f2;
+	line-height: 2rem;
+}
+
+.post-content {
+	margin-top: 2rem;
+	width: 40rem;
+	display: none;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+}
+
+.post {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+	text-align: center;
+	text-decoration: none;
+	color: black; 
+	border: 0.3rem solid #4d4dff;
+	border-radius: 0.4rem;
+	padding: 0.7rem 0.3rem 0.3rem 0.3rem;
+	margin-bottom: 2rem;
+	width: 100%;
+	background-color: #f2f2f2;
+}
+
+.post img {
+	width: 85%;
+}
+
 .contact-content {
 	margin-top: 2rem;
 	color: #f2f2f2;
-	display: hidden;
+	display: none;
 	align-items: center;
 	justify-content: center;
 	flex-direction: column;
 	padding-bottom: 5rem;
+}
+
+.content {
+	height: 100%;
+	max-width: 40rem;
+	overflow: hidden;
+	padding: 0.5rem 0.5rem 2rem 0.5rem;
+	word-wrap: break-word;
+	line-height: 1.5rem;
+}
+
+.content-head {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-direction: column;
+}
+
+.nav-bar {
+	background-color: #101010;
+	list-style-type: none;
+	width: 100%;
+	height: 5rem;
+  	margin: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+.nav-li {
+	display: flex;
+	align-items: center;
+	height: 100%;
+}
+
+.nav-li-right {
+	float: left;
+	margin-left: 0;
+}
+
+.nav-li-left {
+	float: right;
+	margin-right: 20%;
+}
+
+.nav-a {
+	color: #f2f2f2;
+	text-decoration: none;
+	padding-left: 2rem;
+	padding-right: 2rem;
+	font-size: 1.5rem;
+}
+
+.nav-a:hover {
+	color: #aaaaaa;
 }
 
 .img-container {
@@ -249,11 +224,11 @@ th, td {
 
 /* figure names */
 .img-container div {
-	color: #666666;
+	color: #aaaaaa;
 }
 
 .header-text {
-	color: #999999;
+	color: #aaaaaa;
 	font-size: 1.3rem;
 }
 
