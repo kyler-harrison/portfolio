@@ -124,19 +124,7 @@ body {
 }
 
 @media (max-width: 480px) {
-	.sim-box {
-		height: 80rem;
-	}
-	.content-buttons {
-		background-color: red;
-	}
 }
 
 @media (max-width: 768px) {
-	.sim-box {
-		height: 80rem;
-	}
-	.content-buttons {
-		background-color: red;
-	}
 }
