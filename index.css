@@ -132,12 +132,29 @@ body {
 }
 
 @media (max-width: 768px) {
+	body {
+		font-size: 1.1rem;
+	}
+
 	.sim-box {
-		height: 25rem;
+		height: 35rem;
+	}
+
+	.center-name {
+		font-size: 2rem;
+	}
+
+	.center-text {
+		font-size: 1.1rem;
+	}
+
+	.content-buttons {
+		font-size: 1.5rem;
 	}
 
 	.about-content {
 		width: 90%;
+		flex-direction: column;
 	}
 
 	.post-content {
