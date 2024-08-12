@@ -34,7 +34,8 @@ body {
 
 .center-box {
 	position: absolute;
-	width: 50rem;
+	/*width: 50rem;*/
+	width: 50%;
 	text-align: center;
 	text-shadow: 2px 2px var(--black-color);
 	color: var(--white-color);
@@ -50,6 +51,7 @@ body {
 }
 
 .content-buttons {
+	width: 100%;
 	flex-direction: row;
 	color: var(--white-color);
 	text-align: center;
@@ -57,7 +59,8 @@ body {
 }
 
 .content-button {
-	padding: 1rem 3rem 1rem 3rem;
+	/*padding: 1rem 3rem 1rem 3rem;*/
+	padding: 1% 3% 1% 3%;
 }
 
 .content-button:hover {
@@ -68,7 +71,8 @@ body {
 .about-content {
 	flex-direction: row;
 	margin-top: 2rem;
-	width: 50rem;
+	/*width: 50rem;*/
+	width: 50%;
 	display: none;
 	color: var(--white-color);
 	padding-bottom: 5rem;
@@ -85,7 +89,8 @@ body {
 
 .post-content {
 	margin-top: 2rem;
-	width: 40rem;
+	/*width: 40rem;*/
+	width: 40%;
 	display: none;
 	font-size: 1.3rem;
 }
@@ -124,9 +129,6 @@ body {
 }
 
 @media (max-width: 480px) {
-	.center-box {
-		width: 25rem;
-	}
 }
 
 @media (max-width: 768px) {
