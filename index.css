@@ -35,7 +35,7 @@ body {
 .center-box {
 	position: absolute;
 	/*width: 50rem;*/
-	width: 50%;
+	width: 70%;
 	text-align: center;
 	text-shadow: 2px 2px var(--black-color);
 	color: var(--white-color);
@@ -137,6 +137,10 @@ body {
 	body {
 		font-size: 1.1rem;
 		line-height: 1.5rem;
+	}
+
+	h2 {
+		font-size: 1.7rem;
 	}
 
 	.sim-box {
