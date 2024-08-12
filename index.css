@@ -124,6 +124,9 @@ body {
 }
 
 @media (max-width: 480px) {
+	.center-box {
+		width: 25rem;
+	}
 }
 
 @media (max-width: 768px) {
