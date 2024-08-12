@@ -124,6 +124,9 @@ body {
 }
 
 @media (min-width: 480px) {
+	.sim-box {
+		height: 80rem;
+	}
 }
 
 @media (min-width: 768px) {
