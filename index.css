@@ -135,12 +135,12 @@ body {
 
 @media (max-width: 768px) {
 	body {
-		font-size: 1.1rem;
+		font-size: 1.3rem;
 		line-height: 1.5rem;
 	}
 
 	h2 {
-		font-size: 1.7rem;
+		font-size: 1.4rem;
 	}
 
 	.sim-box {
@@ -160,7 +160,7 @@ body {
 	}
 
 	.about-content {
-		width: 95%;
+		width: 100%;
 		flex-direction: column;
 	}
 
