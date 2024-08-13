@@ -235,8 +235,8 @@ if (updateFunction == lorenz) {
     var historyN = 30;
 
     if (originalWidth < smallScaleWidth) {
-        xScale *= 0.65;
-        yScale *= 0.65;
+        xScale *= 0.75;
+        yScale *= 0.75;
     }
 } else if (updateFunction == chen) {
     var N = 500;
