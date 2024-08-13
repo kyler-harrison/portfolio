@@ -186,6 +186,9 @@ function drawPointsTrailsReflect() {
     requestAnimationFrame(drawPointsTrailsReflect);
 }
 
+const originalWidth = screen.width;
+const smallScaleWidth = 800;  // change animation scaling if screen less than this many px
+const smallScaleFactor = 0.5;  // multiply x and y scale terms by this factor
 var simBox = document.getElementById("sim-box");
 var simBoxInfo = simBox.getBoundingClientRect();
 const canvas = document.getElementById("sim-canvas");
@@ -254,6 +257,11 @@ if (updateFunction == lorenz) {
     var yScale = 10;
     var h = 0.001;
     var historyN = 30;
+}
+
+if (originalWidth < smallScaleWidth) {
+    xScale *= smallScaleFactor;
+    yScale *= smallScaleFactor;
 }
 
 var points = generateInitPoints();
