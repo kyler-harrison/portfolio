@@ -121,7 +121,6 @@ body {
 }
 
 .contact-me {
-	font-weight: bold; 
 	padding: 0 0 2% 0;
 }
 
@@ -140,7 +139,7 @@ body {
 	}
 
 	h2 {
-		font-size: 1.4rem;
+		font-size: 1rem;
 	}
 
 	.sim-box {
@@ -162,6 +161,7 @@ body {
 	.about-content {
 		width: 100%;
 		flex-direction: column;
+		text-align: center;
 	}
 
 	.post-content {
