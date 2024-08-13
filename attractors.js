@@ -233,18 +233,33 @@ if (updateFunction == lorenz) {
     var yScale = xScale;
     var h = 0.003;
     var historyN = 30;
+
+    if (originalWidth < smallScaleWidth) {
+        xScale *= 0.65;
+        yScale *= 0.65;
+    }
 } else if (updateFunction == chen) {
     var N = 500;
     var xScale = 14;
     var yScale = 14;
     var h = 0.001;
     var historyN = 30;
+
+    if (originalWidth < smallScaleWidth) {
+        xScale *= 0.9;
+        yScale *= 0.9;
+    }
 } else if (updateFunction == fourWing) {
     var N = 500;
     var xScale = 150;
     var yScale = 150;
     var h = 0.01;
     var historyN = 30;
+
+    if (originalWidth < smallScaleWidth) {
+        xScale *= 0.6;
+        yScale *= 0.6;
+    }
 } else if (updateFunction == halvorsen) {
     var N = 500;
     var xScale = 30;
@@ -259,10 +274,6 @@ if (updateFunction == lorenz) {
     var historyN = 30;
 }
 
-if (originalWidth < smallScaleWidth) {
-    xScale *= smallScaleFactor;
-    yScale *= smallScaleFactor;
-}
 
 var points = generateInitPoints();
 
