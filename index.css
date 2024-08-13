@@ -161,7 +161,6 @@ body {
 	.about-content {
 		width: 100%;
 		flex-direction: column;
-		text-align: center;
 	}
 
 	.post-content {
