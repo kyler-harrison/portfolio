@@ -106,6 +106,7 @@ th, td {
 	justify-content: center;
 	flex-direction: column;
 	text-align: center;
+	width: 100%;
 }
 
 /* figure names */
@@ -126,14 +127,12 @@ th, td {
 		max-width: 90%;
 	}
 
-	/*
 	.main-text-container {
-		font-size: 2rem;
-		line-height: 3rem;
+		font-size: 1.5rem;
+		line-height: 2.5rem;
 	}
-		*/
 
-	.img-container {
+	img {
 		max-width: 85%;
 	}
 }
