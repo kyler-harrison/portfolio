@@ -34,7 +34,7 @@
 				<p>Next, I reduced the size of the word2vec dictionaries. The downloaded dictionaries were several GB in size and contained tokens that were not found in the dataset. <a href="https://github.com/kyler-harrison/transformer-en-es/blob/main/reduce_data.ipynb" target=_blank >This notebook</a> removes all tokens from the word2vec dictionaries that are not present in the dataset and removes all rows from the dataset that don't contain words in the word2vec dictionaries. I don't feel the need to go through the details of that implementation here. There were 111,184 rows in the dataset remaining after this reduction.</p>
 				<p>I wrote several functions to transform the raw string data into embedded and positionally encoded input matrices. Most of this code is found in <a href="https://github.com/kyler-harrison/transformer-en-es/blob/main/preprocess.py" target=_blank>preprocess.py</a>. The logic and reasoning for each of these functions is explained in the previous writeup.</p>
 				<p>I decided to drop all rows of the dataset that contained more than 13 tokens in english and 14 tokens in spanish (I did 1 more token for spanish to account for double punctuation). These numbers were decided somewhat arbitrarily based on the distribution of number of tokens. The resulting dataset has 97,443 rows and an approximately normal distribution of number of tokens.</p>
-				<div class="image-container">
+				<div class="img-container">
 					<img src="en_num_tokens.png">
 					<img src="es_num_tokens.png">
 				</div>
@@ -46,49 +46,49 @@
 				<p>"Our mission is to ensure that artificial general intelligence benefits all of humanity." The AGI hype is fear-mongering, a distraction from the reality: an opulent minority wants to monopolize a cool new technology and make everyone on the planet dependent upon it. Nothing new here.</i></p>
 				<p>Anyways, I evaluated the loss on the training and testing datasets and calculated the <a href="https://aclanthology.org/P02-1040.pdf" target=_blank>1-gram BLEU score</a> after each epoch for each model trained. The parameters changed across models were the batch size, number of heads in the transformer (h), number of encoder/decoder layers in the transformer (N), train/test split ratio, model hyperparameters, and dropout + label smoothing. In the series of graphics below, each model is an iteration on the previous model displayed (i.e. I changed one parameter at a time and then retrained to see performance differences).</p>
 				<p>The first model fit used a 90/10 train/test split, h=1, N=1, batch size of 128, default Adam optimizer parameters (as defined by PyTorch), and no dropout + label smoothing.</p>
-				<div class="image-container">
+				<div class="img-container">
 					<img width=650px src="v0_N=1_h=1.png">
 				</div>
 				<p>The next model used the same parameters as the previous, but with h=4 and N=4.</p>
-				<div class="image-container">
+				<div class="img-container">
 					<img width=650px src="v0_N=4_h=4.png">
 				</div>
 				<p>As N and h increased, I quickly began to run into the memory limits of my graphics card, so I decided to just stick with N=1 and h=1 for the rest of the modeling experiments.</p>
 				<p>The next model used an 80/20 train/test split. I was curious to see if the model would overfit less. It seemed to just take longer to converge to the previous train/test loss values obtained as the 90/10 split models.</p>
-				<div class="image-container">
+				<div class="img-container">
 					<img width=650px src="v1_N=1_h=1.png">
 				</div>
 				<p>Next, I changed the Adam optimzation parameters to those provided in the paper. The parameters listed in the paper are smaller than those used by default in PyTorch. As expected, this led to a slower convergence to previous train/test loss values obtained. The 1-gram BLEU score also obtained a new high around 0.19 (to be fair, this was barely higher than the previous max of ~0.184).</p>
-				<div class="image-container">
+				<div class="img-container">
 					<img width=650px src="v2_N=1_h=1.png">
 				</div>
 				<p>Next, I increased the batch size to 256. I hoped that this would lead to less overfitting. It appeared to decrease the difference between train and test loss a little bit while attaining a similar 1-gram BLEU score.</p>
-				<div class="image-container">
+				<div class="img-container">
 					<img width=650px src="v3_N=1_h=1.png">
 				</div>
 				<p>The last iteration included dropout + label smoothing (used in the paper). I expected this to be the best model fit because I figured these changes would lead to better generalizability, but the results didn't suggest improvement over the previous model. I was especially confused by the early 1-gram BLEU score of ~0.19 followed by a dropoff and an expected increase as seen in previous models.</p>
-				<div class="image-container">
+				<div class="img-container">
 					<img width=650px src="v4_N=1_h=1.png">
 				</div>
 				<br>
 				<h2>Discussion of results and next steps</h2>
 				<p>Somewhat subjectively, somewhat quantitatively, I decided that the best model fit was the one that used an 80/20 train/test split, a batch size of 256, h=1, N=1, and the Adam parameters described in the paper (second-to-last metrics graph above). I wrote a simple <a href="https://github.com/kyler-harrison/transformer-en-es/blob/main/repl.py" target=_blank>REPL</a> to get english-spanish translations on the fly.</p>
 				<p>Here's an example of some perfect (when compared to Google translate outputs) translations:</p>
-				<div class="image-container">
+				<div class="img-container">
 					<img width=500px src="perfect_examples.png">
 				</div>
 				<p>Here are a few translations that contain errors:</p>
-				<div class="image-container">
+				<div class="img-container">
 					<img width=550px src="error_examples.png">
 				</div>
 				<p>If you don't speak any spanish, the errors in the above example may not be obvious to you. When translated back to english with Google translate, these sentences are:</p>
-				<div class="image-container">
+				<div class="img-container">
 					<img width=550px src="tall.png">
 				</div>
-				<div class="image-container">
+				<div class="img-container">
 					<img width=550px src="first_first.png">
 				</div>
-				<div class="image-container">
+				<div class="img-container">
 					<img width=550px src="size.png">
 				</div>
 				<p>Of course, I can't enumerate every possible translation in the space of the model's possible inputs, but I've tried ~100 translations and have noticed a few general behaviors (these are mostly qualitative observations):</p>
