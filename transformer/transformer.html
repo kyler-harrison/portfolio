@@ -53,23 +53,27 @@
 				<p>In addition to the actual tokens in the sequence, we must add special start and end tokens "&ltS&gt" and "&ltE&gt" (reasoning explained later), which makes our input:</p>
 				<p>["&ltS&gt", "He", "is", "tall", ".", "&ltE&gt"]</p>
 				<p>We then use our token-to-vector mapping to map these tokens to vector representations. Let's say our model maps the tokens to vectors of length 5. I'm making all of these numbers up, but let's say the input tokens map to the following vectors:</p>
-				<p>"&ltS&gt": $\begin{bmatrix} 1 & 1 & 1 & 1 & 1 \end{bmatrix}$</p>
-				<p>"He": $\begin{bmatrix} 0.03 & 0.2 & 0.1 & 0.04 & 0.7 \end{bmatrix}$</p>
-				<p>"is": $\begin{bmatrix} 0.3 & 0.01 & 0.11 & 0.2 & 0.07 \end{bmatrix}$</p>
-				<p>"tall": $\begin{bmatrix} 0.5 & 0.1 & 0.3 & 0.02 & 0.9 \end{bmatrix}$</p>
-				<p>".": $\begin{bmatrix} 0 & 0.21 & 0.6 & 0.72 & 0.09 \end{bmatrix}$</p>
-				<p>"&ltE&gt": $\begin{bmatrix} 0.1 & 0.1 & 0.1 & 0.1 & 0.1 \end{bmatrix}$</p>
+				<div class="eqn-box">
+					<p>"&ltS&gt": $\begin{bmatrix} 1 & 1 & 1 & 1 & 1 \end{bmatrix}$</p>
+					<p>"He": $\begin{bmatrix} 0.03 & 0.2 & 0.1 & 0.04 & 0.7 \end{bmatrix}$</p>
+					<p>"is": $\begin{bmatrix} 0.3 & 0.01 & 0.11 & 0.2 & 0.07 \end{bmatrix}$</p>
+					<p>"tall": $\begin{bmatrix} 0.5 & 0.1 & 0.3 & 0.02 & 0.9 \end{bmatrix}$</p>
+					<p>".": $\begin{bmatrix} 0 & 0.21 & 0.6 & 0.72 & 0.09 \end{bmatrix}$</p>
+					<p>"&ltE&gt": $\begin{bmatrix} 0.1 & 0.1 & 0.1 & 0.1 & 0.1 \end{bmatrix}$</p>
+				</div>
 				<p>Let's set the maximum number of tokens in a sentence to 8. After padding the data with rows of 0s, the input sequence maps to the matrix:</p>
-				<p>"He is tall.": $\begin{bmatrix} 1 & 1 & 1 & 1 & 1 \\
-				                                   0.03 & 0.2 & 0.1 & 0.04 & 0.7 \\
-				                                   0.3 & 0.01 & 0.11 & 0.2 & 0.07 \\ 
-																					 0.5 & 0.1 & 0.3 & 0.02 & 0.9 \\ 
-																					 0 & 0.21 & 0.6 & 0.72 & 0.09 \\
-				                                   0.1 & 0.1 & 0.1 & 0.1 & 0.1 \\
-																					 0 & 0 & 0 & 0 & 0 \\
-																					 0 & 0 & 0 & 0 & 0 \\
-																					 \end{bmatrix}$
-				</p>
+				<div class="eqn-box">
+					<p>"He is tall.": $\begin{bmatrix} 1 & 1 & 1 & 1 & 1 \\
+													0.03 & 0.2 & 0.1 & 0.04 & 0.7 \\
+													0.3 & 0.01 & 0.11 & 0.2 & 0.07 \\ 
+																						0.5 & 0.1 & 0.3 & 0.02 & 0.9 \\ 
+																						0 & 0.21 & 0.6 & 0.72 & 0.09 \\
+													0.1 & 0.1 & 0.1 & 0.1 & 0.1 \\
+																						0 & 0 & 0 & 0 & 0 \\
+																						0 & 0 & 0 & 0 & 0 \\
+																						\end{bmatrix}$
+					</p>
+				</div>
 				<p>Moving forward, it will be useful to have a consistent definition of our variables:</p>
 				<ul>
 					<li>embedding_len: size of one embedded input vector</li>
@@ -79,11 +83,15 @@
 				<br>
 				<h3>Positional encoding</h3>
 				<p>In order to give each embedded token vector information about its position in the sequence, the paper presents the following equations:</p>
-				<p>$PE_{(pos, 2i)}=sin(\frac{pos}{10000^{2i/d_{model}}})$</p>
-				<p>$PE_{(pos, 2i + 1)}=cos(\frac{pos}{10000^{2i/d_{model}}})$</p>
+				<div class="eqn-box">
+					<p>$PE_{(pos, 2i)}=sin(\frac{pos}{10000^{2i/d_{model}}})$</p>
+					<p>$PE_{(pos, 2i + 1)}=cos(\frac{pos}{10000^{2i/d_{model}}})$</p>
+				</div>
 				<p>Where $pos$ is the row index of the sequence matrix, $i$ is the dimension, and $d_{model}$ is the dimensionality of the input (i.e. num_tokens * embedding_len). The first equation with $sin$ is used to get a positional encoding for even indices in the token vector, while the $cos$ equation is used for odd indices.</p>
 				<p>Given a sinusoid function $sin(cx)$ where $c$ is a constant, the wavelength (peak-to-peak distance) is given by:</p>
-				<p>$\lambda=\frac{2 \pi}{c}$</p>
+				<div class="eqn-box">
+					<p>$\lambda=\frac{2 \pi}{c}$</p>
+				</div>
 				<p>For $PE$, when $pos$ attains its minimum value of $0$, the wavelength attains a minimum of $\lambda=2 \pi$. For any other value of $pos$, when $i=0$, the wavelength attains a maximum of $\lambda=10000*2 \pi$. This scheme allows each word vector in an embedded sentence matrix to have a unique set of positional values.</p>
 				<p>A quick visualization of the differing frequencies of $PE$ shows the progression of positional encoding values:</p>
 				<div class="img-container">
@@ -121,7 +129,9 @@
 					<img src="sdpa_diag.png" width=400>
 				</div>
 				<p>The scaled dot product attention function is composed of a few relatively straightforward operations. This is where the "attention" (the only thing we need, apparently) is mathematically implemented. It is expressed with the equation:</p>
-				<p>attention($Q$, $K$, $V$) $=$ softmax($\frac{QK^T}{\sqrt{d_k}}$)$V$</p>
+				<div class="eqn-box">
+					<p>attention($Q$, $K$, $V$) $=$ softmax($\frac{QK^T}{\sqrt{d_k}}$)$V$</p>
+				</div>
 				<p>The mask operation will be described and used later in the decoder section of this writeup. It is not needed for the encoder. In more informal language, the encoder attention is computed by doing the following:</p>
 				<ol>
 					<li>matrix multiply $Q$ by the transpose of $K$ -> store result in variable $a$</li>
@@ -135,16 +145,20 @@
 				<p>Understanding attention begins with understanding what the $Q$, $K$, and $V$ linear layers produce. The $Q$, $K$, $V$ layers each transform enc_inp into some new representation that has the same shape as enc_inp. Each of these layers ideally learns to produce a meaningful transformation during the training process. The $Q$ layer is expected to learn to capture the relationship between each token with all other tokens in the sequence. The $K$ layer is expected to capture which tokens in the sequence are relevant to the current token. The $V$ layer is expected to learn how to capture meaningful content in the sequence. These learning expectations are still a bit unclear to me and are not entirely intuitive, but this high-level understanding of $Q$, $K$, $V$ is enough to move forwards.</p>
 				<p>The first step of computing attention is to matrix multiply $Q$ and $K$, and then scale the result by the square root of embedding_len (called $d_k$ in the paper). This step can be thought of as combining and averaging the information contained in $Q$ and $K$.</p>
 				<p>For example, let's consider a matrix $Q$ with shape (3, 2) and a matrix $K$ with shape (3, 2). In order to do this matrix multiplication, $K$ must be transposed to have a shape (2, 3).</p>
-				<p>$Q = \begin{bmatrix} q_{00} & q_{01} \\
-				                        q_{10} & q_{11} \\
-																q_{20} & q_{21} \end{bmatrix} \\
-						K^T = \begin{bmatrix} k_{00} & k_{01} & k_{02} \\
-						                    k_{10} & k_{11} & k_{12} \end{bmatrix}$</p>
+				<div class="eqn-box">
+					<p>$Q = \begin{bmatrix} q_{00} & q_{01} \\
+											q_{10} & q_{11} \\
+																	q_{20} & q_{21} \end{bmatrix} \\
+							K^T = \begin{bmatrix} k_{00} & k_{01} & k_{02} \\
+												k_{10} & k_{11} & k_{12} \end{bmatrix}$</p>
+				</div>
 				<p>The matrix multiplication operation consists of computing the dot products between the rows of $Q$ and the columns of $K$.</p>
-				<p>$QK^T= \begin{bmatrix} q_{00}k_{00} + q_{01}k_{10} & q_{00}k_{01}+q_{01}k_{11} & q_{00}k_{02} + q_{01}k_{12} \\
-						q_{10}k_{00} + q_{11}k_{10} & q_{10}k_{01}+q_{11}k_{11} & q_{10}k_{02} + q_{11}k_{12} \\
-						q_{20}k_{00} + q_{21}k_{10} & q_{20}k_{01}+q_{21}k_{11} & q_{20}k_{02} + q_{21}k_{12}
-						\end{bmatrix}$
+				<div class="eqn-box">
+					<p>$QK^T= \begin{bmatrix} q_{00}k_{00} + q_{01}k_{10} & q_{00}k_{01}+q_{01}k_{11} & q_{00}k_{02} + q_{01}k_{12} \\
+							q_{10}k_{00} + q_{11}k_{10} & q_{10}k_{01}+q_{11}k_{11} & q_{10}k_{02} + q_{11}k_{12} \\
+							q_{20}k_{00} + q_{21}k_{10} & q_{20}k_{01}+q_{21}k_{11} & q_{20}k_{02} + q_{21}k_{12}
+							\end{bmatrix}$
+				</div>
 				</p>
 				<p>Each row in the result of the matmul represents a combination of the information in that row of $Q$ with each column of $K$.</p>
 				<p>Next, this result is scaled by the square root of the number of columns in $Q$. I've assumed that $Q$, $K$, and $V$ will all have the same shape and that shape will be the same as a single input matrix that has the shape (num_tokens, embedding_len). So, in this example, $d_k=$ embedding_len $=$ 2. Why divide by the $\sqrt{2}$ instead of just $2$? Dividing by the square root of $d_k$ gives the resultant matrix a variance of $1$, which is important for keeping the values within a reasonable range.</p>
@@ -168,46 +182,56 @@
 			<p>We first embed and positionally encode the english sentence to produce its numeric matrix representation. This matrix is passed through the entire stack of encoders to produce the encoder context. The input to the decoder is the target output and the encoder context. We don't have the target spanish sentence yet, so we must predict it token-by-token. In this first inference step, the input to the decoder will just contain the special token "&ltS&gt" and no other data. We pad the decoder input with rows of 0s (just like we did with the encoder input) to give it the correct dimensions. The data is passed through the decoder, and a sequence of predicted outputs are produced. We want to predict the first word in the target sequence, so we are only interested in the first predicted output of this sequence. Let's assume it correctly predicts "El" as the first token in the target sequence. Now we update the decoder's input with the newly-predicted token, and then go through the same process to predict the second token. The decoder now recieves an input of ["&ltS&gt", "El"] and the encoder context remains unchanged. The decoder input is once again padded with rows of 0s to get the correct dimensions, and the data is passed through the decoder to get the next prediction. This process continues until the special token "&ltE&gt" is the next prediction in the sequence or when the maximum number of tokens have been predicted. The predicted sequence consists of each token that was predicted in each step of inference. This process of iteratively producing predictions token-by-token must now be reflected in training.</p>
 			<p>We could format our training data and structure our training code in a way to follow the same iterative sequence generation as used during inference, but that would be quite inefficient and rather silly of us since we already have the entire target sequence available during training. We can save a lot of compute with masking.</p>
 			<p>As described in the <b>Attention intuition</b> section above, when $Q$ is multiplied by $K^T$, each row in the resultant matrix contains the information of a row in $Q$ combined with the information in each column of $K$. When you consider that $Q$ and $K$ will contain a numeric representation of the tokens in the target sequence, you see that each row in the resultant matrix contains the information of a token in $Q$ multiplied by each token in $K$. Informally, let's say that a linear transformation performed by the $Q$, $K$, $V$ dense layers on a token t can be represented by $Q_d(\text{t})$, $K_d(\text{t})$, $V_d(\text{t})$, respectively. The multiplication can be thought of like:</p>
-			<p>$QK^T = \begin{bmatrix} Q_d(\text{&ltS&gt})*K_d(\text{&ltS&gt}) & Q_d(\text{&ltS&gt})*K_d(\text{El}) & \text{...} \\
-			                           Q_d(\text{El})*K_d(\text{&ltS&gt}) & Q_d(\text{El})*K_d(\text{El}) & \text{...} \\
-			                           Q_d(\text{es})*K_d(\text{&ltS&gt}) & Q_d(\text{es})*K_d(\text{El}) & \text{...} \\
-			                           Q_d(\text{alto})*K_d(\text{&ltS&gt}) & Q_d(\text{alto})*K_d(\text{El}) & \text{...} \\
-			                           Q_d(\text{.})*K_d(\text{&ltS&gt}) & Q_d(\text{.})*K_d(\text{El}) & \text{...} \\
-			                           Q_d(\text{&ltE&gt})*K_d(\text{&ltS&gt}) & Q_d(\text{&ltE&gt})*K_d(\text{El}) & \text{...} \\
-			\end{bmatrix}$</p>
-			<p>Since I suck at CSS (and also don't like writing it), I didn't show all of the columns in the resultant matrix. The representation above is conceptual and doesn't represent the actual operations that occur, but I think it's a good visual to imagine the scenario at hand. To reiterate one more time, the rows in $QK^T$ contain the information of a token in $Q$ combined with the information of each token in $K$.</p>
+			<div class="eqn-box">
+				<p>$QK^T = \begin{bmatrix} Q_d(\text{&ltS&gt})*K_d(\text{&ltS&gt}) & Q_d(\text{&ltS&gt})*K_d(\text{El}) & \text{...} \\
+										Q_d(\text{El})*K_d(\text{&ltS&gt}) & Q_d(\text{El})*K_d(\text{El}) & \text{...} \\
+										Q_d(\text{es})*K_d(\text{&ltS&gt}) & Q_d(\text{es})*K_d(\text{El}) & \text{...} \\
+										Q_d(\text{alto})*K_d(\text{&ltS&gt}) & Q_d(\text{alto})*K_d(\text{El}) & \text{...} \\
+										Q_d(\text{.})*K_d(\text{&ltS&gt}) & Q_d(\text{.})*K_d(\text{El}) & \text{...} \\
+										Q_d(\text{&ltE&gt})*K_d(\text{&ltS&gt}) & Q_d(\text{&ltE&gt})*K_d(\text{El}) & \text{...} \\
+				\end{bmatrix}$</p>
+			</div>
+			<p>Note that I didn't show all of the columns in the resultant matrix above. The representation above is conceptual and doesn't represent the actual operations that occur, but I think it's a good visual to imagine the scenario at hand. To reiterate one more time, the rows in $QK^T$ contain the information of a token in $Q$ combined with the information of each token in $K$.</p>
 			<p>When the transformer predicts the first token, it should only have access to the information pertaining to the value "&ltS&gt". So, we want to 0 out any results in $QK^T$ that contain information on any of the other tokens in the sequence. On the first step of inference, we want:</p>
-			<p>$QK^T = \begin{bmatrix} Q_d(\text{&ltS&gt})*K_d(\text{&ltS&gt}) & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-			           0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-			           0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-			           0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-			           0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-			           0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-			           0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-			           0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-			\end{bmatrix}$</p>
+			<div class="eqn-box">
+				<p>$QK^T = \begin{bmatrix} Q_d(\text{&ltS&gt})*K_d(\text{&ltS&gt}) & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+						0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+						0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+						0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+						0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+						0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+						0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+						0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+				\end{bmatrix}$</p>
+			</div>
 			<p>When the transformer predicts the second token, it should only have access to the information pertaining to the values "&ltS&gt" and "El". Again, we want to 0 out any other results in $QK^T$.</p>
-			<p>$QK^T = \begin{bmatrix} Q_d(\text{&ltS&gt})*K_d(\text{&ltS&gt}) & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-			                           Q_d(\text{El})*K_d(\text{&ltS&gt}) & Q_d(\text{El})*K_d(\text{El}) & 0 & 0 & 0 & 0 & 0 & 0 \\
-			           0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-			           0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-			           0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-			           0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-			           0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-			           0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-			\end{bmatrix}$</p>
+			<div class="eqn-box">
+				<p>$QK^T = \begin{bmatrix} Q_d(\text{&ltS&gt})*K_d(\text{&ltS&gt}) & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+										Q_d(\text{El})*K_d(\text{&ltS&gt}) & Q_d(\text{El})*K_d(\text{El}) & 0 & 0 & 0 & 0 & 0 & 0 \\
+						0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+						0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+						0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+						0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+						0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+						0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+				\end{bmatrix}$</p>
+			</div>
 			<p>For the third token, it's the same deal:</p>
-			<p>$QK^T = \begin{bmatrix} Q_d(\text{&ltS&gt})*K_d(\text{&ltS&gt}) & 0 & 0 & 0 & \text{...}\\
-			                           Q_d(\text{El})*K_d(\text{&ltS&gt}) & Q_d(\text{El})*K_d(\text{El}) & 0 & 0 & \text{...}\\
-			                           Q_d(\text{es})*K_d(\text{&ltS&gt}) & Q_d(\text{es})*K_d(\text{El}) & Q_d(\text{es})*K_d(\text{es}) & 0 & \text{...} \\
-			           0 & 0 & 0 & 0 & \text{...}  \\
-			           0 & 0 & 0 & 0 & \text{...}  \\
-			           0 & 0 & 0 & 0 & \text{...}  \\
-			           0 & 0 & 0 & 0 & \text{...}  \\
-			           0 & 0 & 0 & 0 & \text{...}  \\
-			\end{bmatrix}$</p>
+			<div class="eqn-box">
+				<p>$QK^T = \begin{bmatrix} Q_d(\text{&ltS&gt})*K_d(\text{&ltS&gt}) & 0 & 0 & 0 & \text{...}\\
+										Q_d(\text{El})*K_d(\text{&ltS&gt}) & Q_d(\text{El})*K_d(\text{El}) & 0 & 0 & \text{...}\\
+										Q_d(\text{es})*K_d(\text{&ltS&gt}) & Q_d(\text{es})*K_d(\text{El}) & Q_d(\text{es})*K_d(\text{es}) & 0 & \text{...} \\
+						0 & 0 & 0 & 0 & \text{...}  \\
+						0 & 0 & 0 & 0 & \text{...}  \\
+						0 & 0 & 0 & 0 & \text{...}  \\
+						0 & 0 & 0 & 0 & \text{...}  \\
+						0 & 0 & 0 & 0 & \text{...}  \\
+				\end{bmatrix}$</p>
+			</div>
 			<p>Hopefully, you're starting to see the pattern. With each additional token, the corresponding row in $QK^T$ adds another column. If you extend this pattern, you get a matrix with a lower triangle of data. During training, the entire target sequence is available, which means that each row in $QK^T$ will not be zeroed in the appropriate locations. The demonstration above suggests that we should get these 0s after the $QK^T$ operation, but that is not what we actually do. First, we compute $QK^T$ (without zeroing anything out), and we later zero out the appropriate positions in the softmax step. The example of $QK^T$ above is just for conceptual clarification. The actual sequence of operations to zero out future information looks like:</p>
-			<p>$\text{masked attention}(Q, K, V) = \text{softmax}(\frac{\text{mask}(QK^T)}{\sqrt{d_k}})V$</p>
+			<div class="eqn-box">
+				<p>$\text{masked attention}(Q, K, V) = \text{softmax}(\frac{\text{mask}(QK^T)}{\sqrt{d_k}})V$</p>
+			</div>
 			<p>Since $\lim_{x\to-\infty} e^{x} =0$, softmax outputs 0 for large negative values. We can take advantage of this to zero out unwanted values. We simply set the upper triangle of $QK^T$ to large negative values. This masking scheme will allow us to pass an entire target sequence into the decoder during training instead of going token-by-token. The 0s in each row prevent the information of future tokens in the sequence from leaking into tokens earlier in the sequence. This propagates all the way to the final predicted outputs.</p>
 			<h4>II. The rest of the decoder</h4>
 			<p>The masked multi-head attention layer outputs are added with the decoder inputs and passed through a LayerNorm(). The output of this layer becomes the input to the $Q$ linear layer in the next attention layer. The inputs to the $K$ and $V$ linear layers for this attention layer are both the encoder context. This attention layer combines these three pieces of information, as described already. The rest of the operations in the decoder are shown in the transformer architecture diagram and have already been explained in the encoder section.</p>
