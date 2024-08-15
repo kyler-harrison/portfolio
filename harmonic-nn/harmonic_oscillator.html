@@ -23,7 +23,6 @@
 				<hr>
 			</div>
 			<div class="main-text-container">
-				<p>The main code for this project can be found <a target=_blank href="https://github.com/kyler-harrison/harmonic-oscillator-nn/blob/main/underdamped_nn.ipynb">here</a>.</p>
 				<h3>The damped harmonic oscillator</h3>
 				<p>Simple harmonic motion occurs when a system displaced from its equilibrium position experiences a restoring force in the direction of its displacement. When there is only one force applied to the system, it oscillates about its equilibrium position.</p>
 				<p>Simple harmonic motion is shown by a block attached to a spring in one dimension (along $y$ axis). Say we have a block of mass $m$ attached to a spring with a spring constant $k$. Hooke's law says: 
@@ -73,6 +72,7 @@
 				<p>
 				With this analyitcal solution, we can define the parameters of an underdamped harmonic oscillator and evaluate its position at any time, $t$. This specific solution is the focus of this project.
 				</p>
+				<br>
 				<h3>Neural networks and the universal approximation theorem</h3>
 				<p>A neural network is a type of statistical model that learns to make predictions based on previously seen data. It consists of internal weights and biases that are updated through a training process with the goal of minimizing a loss function.</p>
 				<p>The internal mathematical functions of a neural network can vary and are selected based on the type of prediction task undertaken. For this project, a simple fully-connected, feedforward neural network was implemented. More on the specific architecture is discussed later.</p>
@@ -90,11 +90,14 @@
 				<p>
 				The purpose of this project was to test the universal approximation theorem by training a neural network to approximate the solution of the underdamped harmonic oscillator. Specifically, the neural network was trained to predict the position of the oscillator given its parameters and the time. As discussed more later, there isn't much practical use for what I've done here, it's just a fun exercise.
 				</p>
-				</p>
+				<p>The main code for this project can be found <a target=_blank href="https://github.com/kyler-harrison/harmonic-oscillator-nn/blob/main/underdamped_nn.ipynb">here</a>.</p>
+				<br>
 				<h3>The training data</h3>
 				<p>The position of the oscillator is dependent upon $A$, $\gamma$, $\omega_0$, $\phi$, and $t$. To generate training data for the neural network to learn from, a random set of these parameters was generated and the analytical solution was used to calculate the position of the oscillator. One randomly generated set counted as one training sample (i.e. one input vector mapping to one scalar output). 1e6 samples were generated for the training dataset. An example of the generated data is shown below.
 				</p>
-				<img src="train_head.png" width=600>
+				<div class="img-container">
+					<img src="train_head.png" width=600>
+				</div>
 				<p>Again, each row represents the parameters of an oscillator at a given time. The columns labeled t, Omega, gamma, phi, and amplitude contain the values of the input vector to the neural network, and column y contains the analytical position value that the network learns to predict.
 				</p>
 				<p>Constraints had to be applied to each parameter of the oscillator. This was necessary to generate a space of parameter values that the neural network could reasonably learn from. Applying these constraints limits the network's abilities to generalize to parameters of values that lie outside of the ranges in the generated dataset. The constraints for each parameter were decided somewhat arbitrarily and were set as follows:
@@ -125,39 +128,62 @@
 				<p>
 				With these constraints in place, the training dataset was generated.
 				</p>
+				<br>
 				<h3>Network architecture and training scheme</h3>
 				<p>At a high level, the neural network looks like:</p>
-				<img src="harmonic_nn.png" width=600>
+				<div class="img-container">
+					<img src="harmonic_nn.png" width=600>
+				</div>
 				<p>The "Hidden layers" portion of the neural network consists of fully-connected dense layers with ReLU activation functions. The network uses the MSE loss function to calculate the error in its predictions and uses the Adam optimizer to update its weights and biases.</p>
 				<p>Along with the train dataset, a test dataset was also generated using the same methods to generate the training data. The test dataset was not used in any part of finding the network's optimal weights and biases. It was only used to test how the model generalizes to unseen data.</p>
 				<p>The neural networks were trained across 30 epochs with a batch size of 64. This means that in each training epoch, the training data was looped over 64 samples at a time. The model at that state in training was used to predict the y value of all 64 samples, and then the MSE loss was computed for those samples. A backward pass was then completed to update the weights and biases of the network. The overall loss was computed at the end of each epoch for the train and test datasets.</p>
 				<p>After the training process completed, a random set of harmonic oscillator parameters were generated and the value of y was computed across the time interval [0, 50] in 0.1 increments. The fitted model was then used to predict the value of y across this time interval and the results of each function were compared.</p>
+				<br>
 				<h3>Results of increasingly complex network architectures</h3>
 				<p>To test the universal approximation theorem, the architecture of the neural network was increasingly given more hidden layers and the trained model's results were compared to the analytical solution. </p>
 				<p>I created 3 different network architectures. The first, simplest network consisted of a dense layer, a ReLU activation function layer, and a final dense layer (referred to as nn_simple later). Visually, this looks like:</p>
-				<img src="harmonic_nn_simple.png" width=600>
+				<div class="img-container">
+					<img src="harmonic_nn_simple.png" width=600>
+				</div>
 				<p>The next version includes two more dense + ReLU layers (referred to as nn_medium).</p>
-				<img src="harmonic_nn_medium.png" width=600>
+				<div class="img-container">
+					<img src="harmonic_nn_medium.png" width=600>
+				</div>
 				<p>The final version includes an additional dense + ReLU layer (referred to as nn_final).</p>
-				<img src="harmonic_nn_final.png" width=600>
+				<div class="img-container">
+					<img src="harmonic_nn_final.png" width=600>
+				</div>
 				<p>For the specific dimensions of each layer and other details about the networks, see the Jupyter notebook containing the code for this project.</p>
 				<p>The loss for nn_simple across the training epochs:</p>
-				<img src="simple_loss.png" width=600>
+				<div class="img-container">
+					<img src="simple_loss.png" width=600>
+				</div>
 				<p>The loss for nn_medium:</p>
-				<img src="medium_loss.png" width=600>
+				<div class="img-container">
+					<img src="medium_loss.png" width=600>
+				</div>
 				<p>The loss for nn_final:</p>
-				<img src="final_loss.png" width=600>
+				<div class="img-container">
+					<img src="final_loss.png" width=600>
+				</div>
 				<p>As expected, the most complex network attains the lowest loss across training. The model's loss on the train and test datasets appears close, which indicates that the model didn't overfit on the training data. This observation suggests that the model should generalize well to unseen data.
 				<p>Four sets of harmonic oscillator parameters were randomly generated and the analytical solution for each was plotted across the time interval [0, 50]. Across this same interval, each model (nn_simple, nn_medium, nn_final) predicted the position of the harmonic oscillator. The results are shown below.</p>
 				<p>nn_simple:</p>
-				<img src="simple_output.png" width=650>
+				<div class="img-container">
+					<img src="simple_output.png" width=650>
+				</div>
 				<p>nn_medium:</p>
-				<img src="medium_output.png" width=650>
+				<div class="img-container">
+					<img src="medium_output.png" width=650>
+				</div>
 				<p>nn_final:</p>
-				<img src="final_output.png" width=650>
+				<div class="img-container">
+					<img src="final_output.png" width=650>
+				</div>
 				<p>Across each set of plots above, the model's predicted positions get closer and closer to the analytical solution as the model's complexity increases. This shows the universal approximation theorem in practice. As the model is given more hidden units, its predictions begin to approximate the solution of the underdamped harmonic oscillator more accurately.</p>
 				<p>I found it especially entertaining to observe how the model became capable of accurately predicting more peaks and valleys of position as its complexity increased. Looking at the plot in the first row and first column in the above images, nn_simple was only able to predict the oscillator's position through the first valley and peak, and then its predictions seemed to converge to 0. In the nn_medium plot, the model was able to pick up several more valleys and peaks in its predictions before it began to seemingly converge to a prediction of 0. Finally, nn_final was able to pick up another valley and peak before it started to converge to 0. The models' predictions on the other three generated harmonic oscillators show similar behavior. The predictions start out a bit erratic and converge to 0 quickly, and then begin to smooth out and more accurately approximate the oscillator's position as the model's complexity increases.</p>
 				<p>It is also worth noting that the final fitted model is able to predict oscillatory motion, even though no periodic functions were used inside the neural network. A dense layer does a dot product and adds a bias term, and the ReLU function outputs a 0 or its input value. And yet, somehow, by stacking these functions together, the model is able to predict oscillatory behavior.</p>
+				<br>
 				<h3>Closing remarks and next steps</h3>
 				<p>In this project, the universal approximation theorem was shown by fitting a neural network to predict the position of a 1-D underdamped harmonic oscillator. As the number of hidden layers in the network was increased, the predicted positions more closely approximated the analytical solution, as expected.</p>
 				<p>The ODE of the 1-D underdamped harmonic oscillator is rather easy to solve analytically. That is to say, a human with some knowledge of solving ODEs can look at the equation of motion and figure out what the function $y$ must be in order to satisfy the EOM. The models in this project were trained on the parameters of the analytical solution, meaning that the answer to the position of the oscillator was already known. Clearly, if you have an analytical solution, there isn't much of a point in creating a model that approximates it. The point of this project wasn't to create a model that is useful, it was simply to observe the universal approximation theorem.</p>
