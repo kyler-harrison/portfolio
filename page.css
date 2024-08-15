@@ -144,4 +144,8 @@ th, td {
 	h3 {
 		font-size: 1.5rem;
 	}
+
+	table {
+		width: 70%;
+	}
 }

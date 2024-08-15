@@ -186,7 +186,6 @@
 			           0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
 			           0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
 			\end{bmatrix}$</p>
-			</div>
 			<p>When the transformer predicts the second token, it should only have access to the information pertaining to the values "&ltS&gt" and "El". Again, we want to 0 out any other results in $QK^T$.</p>
 			<p>$QK^T = \begin{bmatrix} Q_d(\text{&ltS&gt})*K_d(\text{&ltS&gt}) & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
 			                           Q_d(\text{El})*K_d(\text{&ltS&gt}) & Q_d(\text{El})*K_d(\text{El}) & 0 & 0 & 0 & 0 & 0 & 0 \\
@@ -222,6 +221,7 @@
 			<br>
 			<h3>Concluding remarks</h3>
 			<p>The transformer architecture is not totally intuitive to me, but at a certain point, I'm not sure how intuitive it is to anyone. Honestly, why this specific set of matrix operations leads to successful sequence-to-sequence predictions is beyond me. But, I have shown that it does in <a href="../transformer-coded/tfrmr.html">part 2</a> (oh and I guess a bunch of other people have too, but ya know, I had to check that they weren't lying).</p>
+			</div>
 		</div>
 	</body>
 </html>
