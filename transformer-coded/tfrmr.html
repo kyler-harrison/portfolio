@@ -23,11 +23,11 @@
 				<hr>
 			</div>
 			<div class="main-text-container">
-				<!--<h2>Is it intelligence or just a clever sequence of matmuls?</h2>-->
+				<!--<h3>Is it intelligence or just a clever sequence of matmuls?</h3>-->
 				<p>In a previous <a href="../transformer/transformer.html" target="_blank">post</a>, I detailed my comprehension of the paper "Attention is all you need" (<a href="https://arxiv.org/pdf/1706.03762.pdf" target="_blank">arXiv link</a>). Using the transformer code presented in that post, this post describes the code how I trained a transformer to translate english sentences to spanish sentences.</p>
 				<p>For code specific to discussion points, I've created Github gists and have embedded their displays in this webpage. The full repo of code that I actually worked in can be found <a target=_blank href="https://github.com/kyler-harrison/transformer-en-es/tree/main">here</a>.</p>
 				<br>
-				<h2>Data collection and preparation</h2>
+				<h3>Data collection and preparation</h3>
 				<p>The most important part of any data science/machine learning project is the data. <b>Always remember: a good model will never fix bad data</b>. Considering this, I'll admit that I wasn't very thorough when I selected my dataset for this project. I grabbed the first english-spanish sentence pair dataset I found and decided it wasn't such a big deal if I understood the data deeply since I just wanted to see if I could get a transformer to learn something. If this was a real task and people were depending on the results, I would have spent the majority of my time focused on understanding the dataset instead of toying around with different model parameters. Anyways, the dataset I used can be found <a href="https://www.kaggle.com/datasets/lonnieqin/englishspanish-translation-dataset?resource=download" target=_blank>here</a>.</p>
 				<p>I decided to use pre-trained token embeddings for the english and spanish tokens. I did this partly because I didn't understand embedding layers when I started coding the transformer, and partly because I figured pre-trained embeddings would make my transformer learn quicker. In retrospect, I'm not sure if that assumption was valid and I wish I had written my code in a more modular fashion so that I could test out how the transformer performs when it learns the embeddings itself. I found word2vec models <a href="https://fasttext.cc/docs/en/crawl-vectors.html" target=_blank>here</a> and opted for the text file download containing the direct mapping between words and their vectors.</p>
 				<p>I changed the formatting of the downloaded word2vec dictionaries with a <a href="https://github.com/kyler-harrison/transformer-en-es/blob/main/data_utils.py" target=_blank>small script</a>. This script makes a simple csv file in the format of "word,vector" and this format is assumed later when data is loaded.</p>
@@ -39,7 +39,7 @@
 					<img src="es_num_tokens.png">
 				</div>
 				<br>
-				<h2>Model experiments</h2>
+				<h3>Model experiments</h3>
 				<p>I trained several different models with varying parameters. Each model was trained for 20 epochs. Each training epoch consisted of passing the entire training dataset through the transformer in batches, and then performing inference on the entire testing dataset in batches. A single epoch took about 25 minutes on my PC (i7-12700K CPU with 3.60 GHz base clock, 12 cores, 20 total threads; NVIDIA GeForce RTX 3060 with 12 GB GDDR6). So, it took a little over 8 hours to train each model. Conveniently, I sleep about that much every night (and I don't use my PC to sleep).</p>
 				<p><i>A quick side note:</p> 
 				<p>According to a few ~reliable leaks (<a href="https://towardsdatascience.com/the-carbon-footprint-of-gpt-4-d6c676eb21ae#:~:text=According%20to%20unverified%20information%20leaks,8%20=%203%2C125%20servers%20were%20needed." target=_blank>here</a> and <a href="https://www.reddit.com/r/OpenAI/comments/11sbw40/estimate_of_amount_of_compute_used_to_train_gpt4/" target=_blank>here</a> and other places that I've seen), GPT-4 was trained on over 10,000 (maybe 25,000) NVIDIA A100s for 3-4 months. I can't seem to find a concrete price tag for the 80 GB version of this graphics card and it looks like you have to manually contact NVIDIA sales to get a consultation of sorts (i.e. I probably don't qualify to own one and definitely can't afford one), but it looks like most estimates are in the range of <i>$</i>8,000-<i>$</i>15,000. So, let's just call it $10,000 per card. That gives a total GPU cost in the neighborhood of <i>$</i>100e6-<i>$</i>250e6. Now, "Open"AI has some sort of partnership with Microsoft, so they probably got a sweet discount, but still. Do you have <i>$</i>100e6 to buy GPUs with? And an additional <i>$</i>50e6 to employ 500 skilled people? And idk, probably another <i>$</i>50e6 for the physical space required to house the GPUs, employees, and to cover all of the intermediate expenses involved in doing so? Oh, and don't forget that power bill. So, who gets to control the future of AI (and by philosophical extension, humanity)? Hint: it's not "we the people." Realistically, there are only a handful of organizations/corporations/entities on this planet that control enough capital to even afford the current state-of-the-art AI. Hmmm, really makes you wonder, who does AI regulation really protect?</p>
@@ -71,7 +71,7 @@
 					<img width=650px src="v4_N=1_h=1.png">
 				</div>
 				<br>
-				<h2>Discussion of results and next steps</h2>
+				<h3>Discussion of results and next steps</h3>
 				<p>Somewhat subjectively, somewhat quantitatively, I decided that the best model fit was the one that used an 80/20 train/test split, a batch size of 256, h=1, N=1, and the Adam parameters described in the paper (second-to-last metrics graph above). I wrote a simple <a href="https://github.com/kyler-harrison/transformer-en-es/blob/main/repl.py" target=_blank>REPL</a> to get english-spanish translations on the fly.</p>
 				<p>Here's an example of some perfect (when compared to Google translate outputs) translations:</p>
 				<div class="img-container">
@@ -102,7 +102,7 @@
 					<li>erroneous translations will sometimes contain words and/or phrases that are conceptually similar to the true concept (this might be the most interesting observation as it displays the power of the attention mechanism)</li>
 				</ul>
 				<br>
-				<h2>The end (I hate LLMs)</h2>
+				<h3>The end (I hate LLMs)</h3>
 				<p>At this point, all I want to say is that this project was a ton of work and language ML tasks are complicated and I don't want to discuss LLMs anymore.</p>
 			</div>
 		</div>
