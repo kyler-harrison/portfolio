@@ -155,7 +155,6 @@ th, td {
 	 }
 	 
 	 .gist .blob-wrapper.data {
-		max-height: 200px;
 		overflow: auto;
 	 }
 }
