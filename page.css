@@ -80,7 +80,7 @@ hr {
 	line-height: 2rem;
 }
 
-table {
+.text-table {
 	border-collapse: collapse;
 	width: 50%;
 	margin: auto;
@@ -145,7 +145,17 @@ th, td {
 		font-size: 1.5rem;
 	}
 
-	table {
+	.text-table {
 		width: 70%;
 	}
+
+	.gist {
+		max-width: 350px;
+		overflow: auto;
+	 }
+	 
+	 .gist .blob-wrapper.data {
+		max-height: 200px;
+		overflow: auto;
+	 }
 }
