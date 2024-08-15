@@ -80,11 +80,11 @@ body {
 }
 
 .about-left {
-	width: 30%;
+	width: 40%;
 }
 
 .about-right {
-	width: 70%;
+	width: 60%;
 	padding-left: 1rem;
 }
 
@@ -128,10 +128,7 @@ body {
 	color: #66b3ff;
 }
 
-@media (max-width: 480px) {
-}
-
-@media (max-width: 768px) {
+@media (max-width: 1000px) {
 	body {
 		font-size: 1.3rem;
 		line-height: 1.5rem;
