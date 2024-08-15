@@ -30,7 +30,7 @@
 					<div>The final result.</div>
 				</div>
 				<br>
-				<h2 style="text-decoration: underline">Background and theory</h2>
+				<h2 style="text-decoration: underline">I. Background and theory</h2>
 				<p>The main types of telescope designs are the reflector, refractor, and catadioptric. Simply put, reflectors use mirrors to focus a distant image, refractors use lenses, and catadioptric systems use a combination of mirrors and lenses. I decided to build a reflector because it looked like the most feasible design to build. There is also a large online community of DIY reflector enthusiasts, and I figured I'd be able to find advice from this body of public knowledge.</p>
 				<p>Isaac Newton allegedly invented the most popular reflector telescope design. The optics consist of a large concave mirror at the bottom of the telescope tube (primary mirror, $M_1$) and a smaller 45 degree offset mirror (secondary mirror, $M_2$) near the other end of the tube. The primary mirror collects the light that comes into the opening of the tube and reflects it onto the secondary mirror, which is offset at 45$^{\circ}$ from the optical axis (imaginary line going through the center of tube). The secondary mirror then reflects the light into a focuser tube which contains the eyepiece (a lens or system of lenses) which then outputs the light into the observer's eye.</p>
 				<p>The diagram below displays the path of the reflected light in the telescope. It's a simple system, in theory. A tube, two mirrors, and an eyepiece. That's the whole thing. The ultimate purpose of every stage of this scope's construction is to physically place the optical components in their appropriate positions in order to create and focus a magnified image of a distant object for an observer (Isaac Newton, in this case) to view.</p>
@@ -72,8 +72,10 @@
 				</div>
 				<p>A mirror with a larger diameter has more surface area to capture light, which gives better captured images (remember: a circle's area is proportional to its radius squared). For this reason, primary mirrors with smaller values of $N$ are said to be "faster" than mirrors with larger $N$. Faster mirrors also cost many more dollars.</p>
 				<p>The actual quality of the mirror itself is often denoted by a measure of its flatness called the peak-valley ratio (P-V). This ratio tells you how much deviation you can expect in the reflected light's waveform as a fraction of the light's wavelength. Given that I cheaped out on an Amazon mirror of dubious optical quality and that I don't have any high-quality interferometry equipment, I don't know what the P-V ratio of my mirror is.</p>
+				<br>
 				<h3>Secondary mirror, $M_2$</h3>
 				<p>The secondary mirror has an elliptical shape and sits on a 45$^{\circ}$ angle. After reading around a bit on various telescope forums and guides, most people suggest a secondary mirror with a minor axis in the range $[0.15, 0.25]$ of the diameter of the primary mirror. Secondary mirrors smaller than this don't reflect a large enough image, and mirrors larger than this block the amount of light that the primary mirror can collect. The mirror set I purchased came with a 40 mm secondary, which is ~0.19 times the diameter of the primary.</p>
+				<br>
 				<h3>The entire optical system</h3>
 				<p>The magnification of the telescope is given by $M = \frac{f}{f_e}$ where $f=$ focal length of the primary mirror and $f_e=$ focal length of the eyepiece. I started with a <a href="https://www.highpointscientific.com/apertura-10mm-super-wide-angle-1-25-inch-eyepiece-swa10" target=_blank>10 mm</a> and <a href="https://www.highpointscientific.com/apertura-26mm-super-wide-angle-2-eyepiece-swa26" target=_blank>26 mm eyepiece</a>. With my primary mirror focal length of 1600 mm, this gives me the options of 160x or 61.5x magnification. This range of magnification is good enough to observe the moon, planets in our solar system, and deep sky objects.</p>
 				<p>$M_1$ sits at the bottom of the tube on top of a mount. That's easy. But where does $M_2$ sit? And, correspondingly, where does the focuser hole go? The position of $M_2$ relative to the bottom of the tube depends on a few parameters outlined in the diagram below.</p>
@@ -133,14 +135,15 @@
 				M_{2,h} = 57 \text{"}
 				\end{eqnarray}$$
 				</p>
+				<br>
 				<h3>Motion and position of the telescope</h3>
 				<p>Given a latitude and longitude position on Earth, the position of every visible celestial object can be calculated. Celestial positions can be defined by azimuth and altitude angles (az/alt). It is also common to see positions defined on the celestial sphere, which gives right ascension and declination angles (RA/Dec). I find it easier to think in the az/alt coordinate system, so that's what I'll continue with. I haven't read about the methods to calculate celestial positions yet, and it's not necessary if you don't want to. There are several applications that provide you with the positions of celestial objects relative to your position on Earth. I use the mobile version of <a href="https://stellarium.org/" target=_blank>Stellarium</a>.</p>
 				<p>Once you have the az/alt angles of a celestial object relative to your latitude and longitude position, you simply point the telescope to those angles, and ideally you will see a magnified image of the object.</p>
 				<br>
-				<h2 style="text-decoration: underline">The build</h2>
+				<h2 style="text-decoration: underline">II. The build</h2>
 				<h3>Tube</h3>
 				<p>Concrete form tubes are a common choice for DIY Newtonians. They are rigid and good at protecting against moisture (ya know, they're meant for pouring wet concrete). Maybe just as important is that they're cheap and easy to drill into.</p>
-				<p>The tube needs an inner diameter a bit larger than the diameter of the primary mirror. For my 8" primary mirror, this meant a tube with a 10" inner diameter. As described above, the length of the tube is dependent upon the focal length of the primary mirror, its diameter, and its position. For my 1600 mm focal length mirror, this meant purchasing 72" of tube and cutting it down to 57" (I purchased 72" instead of 60" because I wanted some extra tube to test cuts on). I purchased this tube from a local building supply retailer.</p>
+				<p>The tube needs an inner diameter a bit larger than the diameter of the primary mirror. For my 8" primary mirror, this meant a tube with a 10" inner diameter. As described above, the length of the tube is dependent upon the focal length of the primary mirror, its diameter, and its position. For my 1600 mm focal length mirror, this meant purchasing a bit over 6 feet of tube and cutting it down to 57" (I used the extra tube to test cuts on). I purchased this tube from a local building supply retailer.</p>
 				<div class="img-container">
 					<img src="me_and_tube.jpg" width=500>
 					<br>
@@ -153,231 +156,234 @@
 					<br>
 					<div>Figure 8</div>
 					<div>The tube, painted.</div>
-			</div>
-			<h3>Primary mirror mount</h3>
-			<p>Figure 2 makes mirror mounting look deceptively simple. Just put the primary mirror at the bottom of the tube. But how? It won't just stick there. You need to build a mount. And that mount needs to allow for collimation adjustments (more on this later).</p>
-			<p>I decided to make the mount out of wood. I roughly followed the design described by <a href="https://garyseronik.com/a-simple-double-plate-mirror-cell-for-your-reflector/" target=_blank>Gary Seronik</a> (there are a ton of other useful astro DIY explanations on his site too). The design consists of a wooden plate (mirror plate) for the mirror to sit on and a larger plate (base plate) that screws into the tube itself. Before cutting out the plates, I cut holes in the middle of each plate for better heat dissipation. I'm not sure how important this really is, but I did it. All cuts were made with a jigsaw.</p>
-			<p>I drilled four countersunk holes into the top of the mirror plate. Four concentric holes were drilled into the base plate. Four 3" 1/4"-20 countersunk bolts were then placed into the holes. Four hex nuts (with washers) were tightened onto the bolts to secure them to the mirror plate. Springs were placed over the long ends of the bolts. Washers were placed between the top of the base plate and the bottom of each spring. Four wingnuts (with washers) were threaded onto the bolts on the bottom side of the base plate. By tightening/loosening these wingnuts, the springs are compressed/expanded, which changes the angle of $M_1$ (movement needed for collimation). Lastly, I drilled four angle brackets onto the side of the mirror plate. After checking that the mount worked as intended, I spray painted the plates black (excepting the top of the mirror plate, as $M_1$ covers it).</p>
-			<p>Finally, I glued the bottom of $M_1$ to the top of the mirror plate and glued the sides to the angle brackets on the mirror plate with silicone RTV adhesive. After 24 hours, $M_1$ became one with its mount. Later in the build, 4 3/8" wood screws were drilled into the outside of the tube and then into the sides of the base plate.</p>
-			<div class="img-container">
-				<img src="m1_mount.jpg" width=600>
+				</div>
 				<br>
-				<div>Figure 9</div>
-				<div>$M_1$ mount from the side.</div>
-			</div>
-			<br>
-			<br>
-			<div class="img-container">
-				<img src="m1_mount_in_tube.jpg" width=600>
+				<h3>Primary mirror mount</h3>
+				<p>Figure 2 makes mirror mounting look deceptively simple. Just put the primary mirror at the bottom of the tube. But how? It won't just stick there. You need to build a mount. And that mount needs to allow for collimation adjustments (more on this later).</p>
+				<p>I decided to make the mount out of wood. I roughly followed the design described by <a href="https://garyseronik.com/a-simple-double-plate-mirror-cell-for-your-reflector/" target=_blank>Gary Seronik</a> (there are a ton of other useful astro DIY explanations on his site too). The design consists of a wooden plate (mirror plate) for the mirror to sit on and a larger plate (base plate) that screws into the tube itself. Before cutting out the plates, I cut holes in the middle of each plate for better heat dissipation. I'm not sure how important this really is, but I did it. All cuts were made with a jigsaw.</p>
+				<p>I drilled four countersunk holes into the top of the mirror plate. Four concentric holes were drilled into the base plate. Four 3" 1/4"-20 countersunk bolts were then placed into the holes. Four hex nuts (with washers) were tightened onto the bolts to secure them to the mirror plate. Springs were placed over the long ends of the bolts. Washers were placed between the top of the base plate and the bottom of each spring. Four wingnuts (with washers) were threaded onto the bolts on the bottom side of the base plate. By tightening/loosening these wingnuts, the springs are compressed/expanded, which changes the angle of $M_1$ (movement needed for collimation). Lastly, I drilled four angle brackets onto the side of the mirror plate. After checking that the mount worked as intended, I spray painted the plates black (excepting the top of the mirror plate, as $M_1$ covers it).</p>
+				<p>Finally, I glued the bottom of $M_1$ to the top of the mirror plate and glued the sides to the angle brackets on the mirror plate with silicone RTV adhesive. After 24 hours, $M_1$ became one with its mount. Later in the build, 4 3/8" wood screws were drilled into the outside of the tube and then into the sides of the base plate.</p>
+				<div class="img-container">
+					<img src="m1_mount.jpg" width=600>
+					<br>
+					<div>Figure 9</div>
+					<div>$M_1$ mount from the side.</div>
+				</div>
 				<br>
-				<div>Figure 10</div>
-				<div>How the mount sits in the bottom of the tube.</div>
-			</div>
-			<br>
-			<br>
-			<div class="img-container">
-				<img src="m1_on_mount.jpg" width=600>
 				<br>
-				<div>Figure 11</div>
-				<div>$M_1$ sitting on its mount.</div>
-			</div>
-			<br>
-			<h3>Focuser</h3>
-			<p>The focuser holds the eyepiece and has a turnable knob that moves eyepiece closer to or farther from $M_2$. I purchased <a href="https://www.amazon.com/gp/product/B09S3W3D2M/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8" target=_blank>this Crayford focuser</a>. I cut out a jagged hole in the tube with a center roughly at the point where the center of $M_2$ is supposed to sit and then bolted the focuser down with some miscellaneous hardware I found in the garage.</p>
-			<h3>Secondary mirror mount</h3>
-			<p>Mounting the secondary mirror was a bit trickier than the primary mirror. The center of $M_2$ must sit along the optical axis going through the center of $M_1$ and be concentric with the focuser hole. It also needs to sit on a tilt of 45$^{\circ}$ relative to the face of $M_1$. To meet these requirements, the secondary mount must allow for $M_2$ to rotate around the optical axis and around the plane parallel to the focal plane. I decided to build a curved vane mount because it looked like it would allow for easy positioning of $M_2$. Again, I mostly followed a design described by <a href="https://garyseronik.com/how-to-build-a-curved-vane-secondary-mirror-holder/" target=_blank>Gary Seronik</a></p>
-			<p>This mount consists of two blocks, a threaded rod, a machine screw, a 16" stainless steel ruler, and a couple of nuts+washers.</p>
-			<div class="img-container">
-				<img src="m2_mount.jpg" width=600>
+				<div class="img-container">
+					<img src="m1_mount_in_tube.jpg" width=600>
+					<br>
+					<div>Figure 10</div>
+					<div>How the mount sits in the bottom of the tube.</div>
+				</div>
 				<br>
-				<div>Figure 12</div>
-				<div>$M_2$ sitting on its mount.</div>
-			</div>
-			<br>
-			<p>As shown above, the block that the mirror sits on is cut at about 45$^{\circ}$. I found some wooden rods in our garage and cut this piece out with a miter saw and then spray painted it black. The second block is just a cube with a few holes. Initially, I cut this piece out of the same wooden rod, but I split it in half while drilling into it. Fortunately, I have a friend with a 3D printer, and I had him print me out the piece after I modeled it in FreeCAD. The back of $M_2$ was glued to the wooden surface with the same silicone adhesive used for adhering $M_1$ to its mount. A 1/4" hole was drilled through the center of each piece to accept a threaded rod. This rod attaches the pieces together and allows for a rotation along the optical axis once the assembly is placed in the tube. The bolt end sticking out of the side of the cube allows for the rotation along the plane parallel to the focuser plane (i.e. you can adjust this to get the desired 45$^{\circ}$ offset).</p>
-			<div class="img-container">
-				<img src="m2_curved_vane_crop.jpg" width=600>
 				<br>
-				<div>Figure 13</div>
-				<div>$M_2$ mount assembly attached to the curved vane.</div>
-			</div>
-			<br>
-			<p>I drilled a hole in the center of the stainless steel ruler and then spray painted it black. The center hole accepts the bolt end sticking out of the cube (note that the above picture has the original wooden cube piece mentioned previously, not the final 3D printed cube). With a bit of hardware, this setup lets you lock the mount's offset angle in place.</p>
-			<p>The last step was to mount this entire assembly into the tube. To do this, I drilled holes into both ends of the stainless steel ruler. These holes were made to accept small (maybe 1/8"?) bolts to hold the mount in place. I then flexed and morphed the ruler until it was in a position that put $M_2$ in the center of the tube. This took a lot of trial and error, but I finally got it just right (approximately).</p>
-			<div class="img-container">
-				<img src="m2_final_look.jpg" width=600>
+				<div class="img-container">
+					<img src="m1_on_mount.jpg" width=600>
+					<br>
+					<div>Figure 11</div>
+					<div>$M_1$ sitting on its mount.</div>
+				</div>
 				<br>
-				<div>Figure 14</div>
-				<div>The view of $M_2$ from the open end of the tube.</div>
-			</div>
-			<br>
-			<br>
-			<div class="img-container">
-				<img src="m2_focuser.jpg" width=600>
+				<h3>Focuser</h3>
+				<p>The focuser holds the eyepiece and has a turnable knob that moves eyepiece closer to or farther from $M_2$. I purchased <a href="https://www.amazon.com/gp/product/B09S3W3D2M/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8" target=_blank>this Crayford focuser</a>. I cut out a jagged hole in the tube with a center roughly at the point where the center of $M_2$ is supposed to sit and then bolted the focuser down with some miscellaneous hardware I found in the garage.</p>
 				<br>
-				<div>Figure 15</div>
-				<div>View of the ~perfectly positioned $M_2$ through the focuser.</div>
-			</div>
-			<br>
-			<h3>Dobsonian mount</h3>
-			<p>The <a href="https://en.wikipedia.org/wiki/Dobsonian_telescope" target=_blank>Dobsonian mount</a> is a common DIY Newtonian mount type. There is no single definition of what a Dobsonian mount is, but generally speaking, the design consists of some sort of azimuth angle-rotating box with two circular altitude-rotating pieces attached to the telescope tube. The mount I built was made entirely with wood.</p>
-			<p>I planned on cutting out two circular plates of plywood for the part of the mount that sits on the ground and rotates around the azimuth, but luckily for me I found pre-cut circular pieces of about the right diameter (~17") at Home Depot. I learned how painful cutting clean circles is with a jigsaw during the creation of the primary mount and did not regret saving myself the effort here. Between these two wooden circles, I screwed in some teflon furniture sliders. These pieces act as the bearings for the azimuth angle adjustment. The friction of teflon surfaces is good for a smooth rotation when you apply enough force, but also enough to hold the scope in place when you don't want to rotate it anymore. I drilled holes in the center of these circles (it took a long time to mark these concentric holes and they're still a little off) and placed a 1/2" threaded rod through them. On the top plate, a wing nut + washer was used to lock the top plate in place, and a hex nut + washer was used to lock the bottom plate in place. I cut out three small rectangular pieces of wood for feet. These pieces were glued onto the bottom of the bottom plate.</p>
-			<div class="img-container">
-				<img src="plates_bottom_crop.jpg" width=600>
+				<h3>Secondary mirror mount</h3>
+				<p>Mounting the secondary mirror was a bit trickier than the primary mirror. The center of $M_2$ must sit along the optical axis going through the center of $M_1$ and be concentric with the focuser hole. It also needs to sit on a tilt of 45$^{\circ}$ relative to the face of $M_1$. To meet these requirements, the secondary mount must allow for $M_2$ to rotate around the optical axis and around the plane parallel to the focal plane. I decided to build a curved vane mount because it looked like it would allow for easy positioning of $M_2$. Again, I mostly followed a design described by <a href="https://garyseronik.com/how-to-build-a-curved-vane-secondary-mirror-holder/" target=_blank>Gary Seronik</a></p>
+				<p>This mount consists of two blocks, a threaded rod, a machine screw, a 16" stainless steel ruler, and a couple of nuts+washers.</p>
+				<div class="img-container">
+					<img src="m2_mount.jpg" width=600>
+					<br>
+					<div>Figure 12</div>
+					<div>$M_2$ sitting on its mount.</div>
+				</div>
 				<br>
-				<div>Figure 16</div>
-				<div>Azimuth plates (bottom). The bottom plate remains stationary.</div>
-			</div>
-			<br>
-			<br>
-			<div class="img-container">
-				<img src="plates_top_crop.jpg" width=600>
+				<p>As shown above, the block that the mirror sits on is cut at about 45$^{\circ}$. I found some wooden rods in our garage and cut this piece out with a miter saw and then spray painted it black. The second block is just a cube with a few holes. Initially, I cut this piece out of the same wooden rod, but I split it in half while drilling into it. Fortunately, I have a friend with a 3D printer, and I had him print me out the piece after I modeled it in FreeCAD. The back of $M_2$ was glued to the wooden surface with the same silicone adhesive used for adhering $M_1$ to its mount. A 1/4" hole was drilled through the center of each piece to accept a threaded rod. This rod attaches the pieces together and allows for a rotation along the optical axis once the assembly is placed in the tube. The bolt end sticking out of the side of the cube allows for the rotation along the plane parallel to the focuser plane (i.e. you can adjust this to get the desired 45$^{\circ}$ offset).</p>
+				<div class="img-container">
+					<img src="m2_curved_vane_crop.jpg" width=600>
+					<br>
+					<div>Figure 13</div>
+					<div>$M_2$ mount assembly attached to the curved vane.</div>
+				</div>
 				<br>
-				<div>Figure 17</div>
-				<div>Azimuth plates (top). The top plate rotates around the threaded rod.</div>
-			</div>
-			<br>
-			<br>
-			<div class="img-container">
-				<img src="plate_mid_crop.jpg" width=600>
+				<p>I drilled a hole in the center of the stainless steel ruler and then spray painted it black. The center hole accepts the bolt end sticking out of the cube (note that the above picture has the original wooden cube piece mentioned previously, not the final 3D printed cube). With a bit of hardware, this setup lets you lock the mount's offset angle in place.</p>
+				<p>The last step was to mount this entire assembly into the tube. To do this, I drilled holes into both ends of the stainless steel ruler. These holes were made to accept small (maybe 1/8"?) bolts to hold the mount in place. I then flexed and morphed the ruler until it was in a position that put $M_2$ in the center of the tube. This took a lot of trial and error, but I finally got it just right (approximately).</p>
+				<div class="img-container">
+					<img src="m2_final_look.jpg" width=600>
+					<br>
+					<div>Figure 14</div>
+					<div>The view of $M_2$ from the open end of the tube.</div>
+				</div>
 				<br>
-				<div>Figure 18</div>
-				<div>Teflon bearings between plates (picture taken after wood staining)</div>
-			</div>
-			<br>
-			<br>
-			<div class="img-container">
-				<img src="plate_feet_crop.jpg" width=600>
 				<br>
-				<div>Figure 19</div>
-				<div>The mount's feet (picture taken after wood staining)</div>
+				<div class="img-container">
+					<img src="m2_focuser.jpg" width=600>
+					<br>
+					<div>Figure 15</div>
+					<div>View of the ~perfectly positioned $M_2$ through the focuser.</div>
+				</div>
 				<br>
-			</div>
-			<p>I constructed a three-sided rectangular box (roughly 32"x13"x13") to sit on top of the top azimuth-rotating plate. I cut out the bottom part of a 12" diameter circle on each of the side boards, a handle out of the front-facing board, and two 12" diameter semi-circles to attach the mount to the tube. I then cut off some 2"x1" pieces of teflon and screwed them into the curved part of the side boards. The 12" diameter semi-circles glide along this surface.</p>
-			<div class="img-container">
-				<img src="box_boards_crop.jpg" width=600>
+				<h3>Dobsonian mount</h3>
+				<p>The <a href="https://en.wikipedia.org/wiki/Dobsonian_telescope" target=_blank>Dobsonian mount</a> is a common DIY Newtonian mount type. There is no single definition of what a Dobsonian mount is, but generally speaking, the design consists of some sort of azimuth angle-rotating box with two circular altitude-rotating pieces attached to the telescope tube. The mount I built was made entirely with wood.</p>
+				<p>I planned on cutting out two circular plates of plywood for the part of the mount that sits on the ground and rotates around the azimuth, but luckily for me I found pre-cut circular pieces of about the right diameter (~17") at Home Depot. I learned how painful cutting clean circles is with a jigsaw during the creation of the primary mount and did not regret saving myself the effort here. Between these two wooden circles, I screwed in some teflon furniture sliders. These pieces act as the bearings for the azimuth angle adjustment. The friction of teflon surfaces is good for a smooth rotation when you apply enough force, but also enough to hold the scope in place when you don't want to rotate it anymore. I drilled holes in the center of these circles (it took a long time to mark these concentric holes and they're still a little off) and placed a 1/2" threaded rod through them. On the top plate, a wing nut + washer was used to lock the top plate in place, and a hex nut + washer was used to lock the bottom plate in place. I cut out three small rectangular pieces of wood for feet. These pieces were glued onto the bottom of the bottom plate.</p>
+				<div class="img-container">
+					<img src="plates_bottom_crop.jpg" width=600>
+					<br>
+					<div>Figure 16</div>
+					<div>Azimuth plates (bottom). The bottom plate remains stationary.</div>
+				</div>
 				<br>
-				<div>Figure 20</div>
-				<div>The box and semi-circle pieces/</div>
-			</div>
-			<br>
-			<br>
-			<div class="img-container">
-				<img src="box_crop.jpg" width=600>
 				<br>
-				<div>Figure 21</div>
-				<div>The unfinished box (featuring an unrelated paint stain I made on the floor).</div>
-			</div>
-			<br>
-			<br>
-			<div class="img-container">
-				<img src="box_cat_crop.jpg" width=600>
+				<div class="img-container">
+					<img src="plates_top_crop.jpg" width=600>
+					<br>
+					<div>Figure 17</div>
+					<div>Azimuth plates (top). The top plate rotates around the threaded rod.</div>
+				</div>
 				<br>
-				<div>Figure 22</div>
-				<div>Whiskers likes telescopes</div>
-			</div>
-			<br>
-			<p>To assemble the box, I screwed the side boards together. I also cut out a 3" wide piece with the length of the front board to keep the side boards from angling in (i.e. to keep the box a box). Finally, I glued the assembled box to the top azimuth plate.</p>
-			<p>The altitude bearing plates should ideally sit at the balance point of the telescope. I estimated the balanced point to be around 29" up the tube when the heaviest eyepiece is in place. I attached the altitude bearing plates to the tube with 3 bolts each (see image below). At this point, the telescope was functionally complete.</p>
-			<div class="img-container">
-				<img src="almost_done_crop.jpg" width=600>
 				<br>
-				<div>Figure 23</div>
-				<div>The functionally complete telescope</div>
-			</div>
-			<br>
-			<h3>Wood staining</h3>
-			<p>Before assembling any of the wood pieces, I sanded all sides of each piece with 120 and then 150 grit sandpaper. I brushed the pieces off and did my best to remove all remaining wood dust with the leaf blower. This process was quite time-consuming and very tedious, but was worth the effort in order to create a smooth texture and appropriate surfaces for wood stain.</p>
-			<p>I stained the pieces with the following steps:</p>
-			<ul>
-				<li>apply pre-stain wood conditioner, wait 30 minutes</li>
-				<li>apply stain, wait 8+ hours</li>
-				<li>apply polyurethane, wait 8+ hours</li>
-				<li>sand pieces with 220 grit (scuff layer)</li>
-				<li>apply polyurethane</li>
-			</ul>
-			<p>I used all oil-based solutions and chose the stain color of cognac. I used old t-shirts to apply each layer. This entire process took me a few days to complete and made me pretty light-headed (don't huff paint).</p>
-			<div class="img-container">
-				<img src="staining_crop.jpg" width=600>
+				<div class="img-container">
+					<img src="plate_mid_crop.jpg" width=600>
+					<br>
+					<div>Figure 18</div>
+					<div>Teflon bearings between plates (picture taken after wood staining)</div>
+				</div>
 				<br>
-				<div>Figure 24</div>
-				<div>Staining the wood (making a mess)</div>
-			</div>
-			<br>
-			<h3>Laser guide</h3>
-			<p>Okay great, the thing is finished. But, how the hell do I <i>point it</i>? Most hand-guided scopes use a finderscope or a laser to aim the tube at a celestial object. I opted for the laser solution because it looked more DIY-able. I purchased <a href="https://www.amazon.com/gp/product/B0B8WW85LG/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1" target=_blank>this 532 nm (green) laser</a> and attempted to make a mount for it with PVC pipe coupling and spare nuts+bolts.</p>
-			<div class="img-container">
-				<img src="diy_laser_crop.jpg" width=600>
 				<br>
-				<div>Figure 25</div>
-				<div>DIY laser mount (featuring the cut-off piece of "test" tube)</div>
-			</div>
-			<br>
-			<p>I decided this DIY mount didn't allow for precise-enough adjustments to the laser's position and scrapped this part. At this point I felt a bit mentally drained with the build and I wanted to finish it. That is to say, I caved and bought <a href="https://www.amazon.com/gp/product/B07RW6GTB9/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1" target=_blank>this laser mount</a> and <a href="https://www.amazon.com/gp/product/B0C4DV3Q1P/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1" target=_blank>this mount holder</a>.</p>
-			<div class="img-container">
-				<img src="laser_mount_final.jpg" width=600>
+				<div class="img-container">
+					<img src="plate_feet_crop.jpg" width=600>
+					<br>
+					<div>Figure 19</div>
+					<div>The mount's feet (picture taken after wood staining)</div>
+					<br>
+				</div>
+				<p>I constructed a three-sided rectangular box (roughly 32"x13"x13") to sit on top of the top azimuth-rotating plate. I cut out the bottom part of a 12" diameter circle on each of the side boards, a handle out of the front-facing board, and two 12" diameter semi-circles to attach the mount to the tube. I then cut off some 2"x1" pieces of teflon and screwed them into the curved part of the side boards. The 12" diameter semi-circles glide along this surface.</p>
+				<div class="img-container">
+					<img src="box_boards_crop.jpg" width=600>
+					<br>
+					<div>Figure 20</div>
+					<div>The box and semi-circle pieces/</div>
+				</div>
 				<br>
-				<div>Figure 26</div>
-				<div>The purchased laser mount</div>
-			</div>
-			<br>
-			<h3>Collimation</h3>
-			<p>Collimation is the process of lining up the centers of $M_1$ and $M_2$ with the center of the focuser hole. This is an important alignment step that needs to be completed in order to get good views when looking at objects. Once again, I'll defer to <a href="https://garyseronik.com/a-beginners-guide-to-collimation/" target=_blank>Gary Seronik</a> for a more thorough explanation. When you realize that the goal of collimation is to see concentric circles when you look down the focuser hole, the necessary adjustments become intuitive. I purchased a Cheshire collimator for this adjustment because it looked like less of a hassle to use than a laser collimator. Using the $M_1$ mount angle adjustment hardware described earlier, I simply made the circles concentric.</p>
-			<br>
-			<h2 style="text-decoration: underline">Results</h2>
-			<p>I'm quite happy with the final result. The telescope looks nice and functions as intended. The altitude and azimuth movements aren't the smoothest, but they're good enough.</p>
-			<div class="img-container">
-				<img src="nt_final_crop.jpg" width=500>
 				<br>
-				<div>Figure 27</div>
-				<div>Again, the final result</div>
-			</div>
-			<br>
-			<p>And, it works. I captured the following moon images by holding my iPhone 13 Mini camera up to the 26 mm eyepiece. The focus is a bit wonky and you can see some chromatic aberration around the edges of the moon (the blue-ish lines), but all in all, I'm pretty impressed with the clarity of these pictures.</p>
-			<div class="img-container">
-				<img src="half_moon_crop.jpg" width=500>
+				<div class="img-container">
+					<img src="box_crop.jpg" width=600>
+					<br>
+					<div>Figure 21</div>
+					<div>The unfinished box (featuring an unrelated paint stain I made on the floor).</div>
+				</div>
 				<br>
-				<div>Figure 28</div>
-				<div>Approximately half of the moon.</div>
-			</div>
-			<br>
-			<br>
-			<div class="img-container">
-				<img src="moon_1_crop.jpg" width=500>
 				<br>
-				<div>Figure 29</div>
-				<div>Full moon.</div>
-			</div>
-			<br>
-			<br>
-			<div class="img-container">
-				<img src="moon_0_crop.jpg" width=500>
+				<div class="img-container">
+					<img src="box_cat_crop.jpg" width=600>
+					<br>
+					<div>Figure 22</div>
+					<div>Whiskers likes telescopes</div>
+				</div>
 				<br>
-				<div>Figure 30</div>
-				<div>Full moon, again.</div>
-			</div>
-			<br>
-			<br>
-			<div class="img-container">
-				<img src="bright_moon.jpg" width=500>
+				<p>To assemble the box, I screwed the side boards together. I also cut out a 3" wide piece with the length of the front board to keep the side boards from angling in (i.e. to keep the box a box). Finally, I glued the assembled box to the top azimuth plate.</p>
+				<p>The altitude bearing plates should ideally sit at the balance point of the telescope. I estimated the balanced point to be around 29" up the tube when the heaviest eyepiece is in place. I attached the altitude bearing plates to the tube with 3 bolts each (see image below). At this point, the telescope was functionally complete.</p>
+				<div class="img-container">
+					<img src="almost_done_crop.jpg" width=600>
+					<br>
+					<div>Figure 23</div>
+					<div>The functionally complete telescope</div>
+				</div>
 				<br>
-				<div>Figure 31</div>
-				<div>Probably the best moon image I've taken.</div>
-			</div>
-			<br>
-			<br>
-			<div class="img-container">
-				<img src="160x_moon.jpg" width=500>
+				<h3>Wood staining</h3>
+				<p>Before assembling any of the wood pieces, I sanded all sides of each piece with 120 and then 150 grit sandpaper. I brushed the pieces off and did my best to remove all remaining wood dust with the leaf blower. This process was quite time-consuming and very tedious, but was worth the effort in order to create a smooth texture and appropriate surfaces for wood stain.</p>
+				<p>I stained the pieces with the following steps:</p>
+				<ul>
+					<li>apply pre-stain wood conditioner, wait 30 minutes</li>
+					<li>apply stain, wait 8+ hours</li>
+					<li>apply polyurethane, wait 8+ hours</li>
+					<li>sand pieces with 220 grit (scuff layer)</li>
+					<li>apply polyurethane</li>
+				</ul>
+				<p>I used all oil-based solutions and chose the stain color of cognac. I used old t-shirts to apply each layer. This entire process took me a few days to complete and made me pretty light-headed (don't huff paint).</p>
+				<div class="img-container">
+					<img src="staining_crop.jpg" width=600>
+					<br>
+					<div>Figure 24</div>
+					<div>Staining the wood (making a mess)</div>
+				</div>
 				<br>
-				<div>Figure 32</div>
-				<div>160x magnification.</div>
+				<h3>Laser guide</h3>
+				<p>Okay great, the thing is finished. But, how the hell do I <i>point it</i>? Most hand-guided scopes use a finderscope or a laser to aim the tube at a celestial object. I opted for the laser solution because it looked more DIY-able. I purchased <a href="https://www.amazon.com/gp/product/B0B8WW85LG/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1" target=_blank>this 532 nm (green) laser</a> and attempted to make a mount for it with PVC pipe coupling and spare nuts+bolts.</p>
+				<div class="img-container">
+					<img src="diy_laser_crop.jpg" width=600>
+					<br>
+					<div>Figure 25</div>
+					<div>DIY laser mount (featuring the cut-off piece of "test" tube)</div>
+				</div>
+				<br>
+				<p>I decided this DIY mount didn't allow for precise-enough adjustments to the laser's position and scrapped this part. At this point I felt a bit mentally drained with the build and I wanted to finish it. That is to say, I caved and bought <a href="https://www.amazon.com/gp/product/B07RW6GTB9/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1" target=_blank>this laser mount</a> and <a href="https://www.amazon.com/gp/product/B0C4DV3Q1P/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&psc=1" target=_blank>this mount holder</a>.</p>
+				<div class="img-container">
+					<img src="laser_mount_final.jpg" width=600>
+					<br>
+					<div>Figure 26</div>
+					<div>The purchased laser mount</div>
+				</div>
+				<br>
+				<h3>Collimation</h3>
+				<p>Collimation is the process of lining up the centers of $M_1$ and $M_2$ with the center of the focuser hole. This is an important alignment step that needs to be completed in order to get good views when looking at objects. Once again, I'll defer to <a href="https://garyseronik.com/a-beginners-guide-to-collimation/" target=_blank>Gary Seronik</a> for a more thorough explanation. When you realize that the goal of collimation is to see concentric circles when you look down the focuser hole, the necessary adjustments become intuitive. I purchased a Cheshire collimator for this adjustment because it looked like less of a hassle to use than a laser collimator. Using the $M_1$ mount angle adjustment hardware described earlier, I simply made the circles concentric.</p>
+				<br>
+				<h2 style="text-decoration: underline">III. Results</h2>
+				<p>I'm quite happy with the final result. The telescope looks nice and functions as intended. The altitude and azimuth movements aren't the smoothest, but they're good enough.</p>
+				<div class="img-container">
+					<img src="nt_final_crop.jpg" width=500>
+					<br>
+					<div>Figure 27</div>
+					<div>Again, the final result</div>
+				</div>
+				<br>
+				<p>And, it works. I captured the following moon images by holding my iPhone 13 Mini camera up to the 26 mm eyepiece. The focus is a bit wonky and you can see some chromatic aberration around the edges of the moon (the blue-ish lines), but all in all, I'm pretty impressed with the clarity of these pictures.</p>
+				<div class="img-container">
+					<img src="half_moon_crop.jpg" width=500>
+					<br>
+					<div>Figure 28</div>
+					<div>Approximately half of the moon.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="moon_1_crop.jpg" width=500>
+					<br>
+					<div>Figure 29</div>
+					<div>Full moon.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="moon_0_crop.jpg" width=500>
+					<br>
+					<div>Figure 30</div>
+					<div>Full moon, again.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="bright_moon.jpg" width=500>
+					<br>
+					<div>Figure 31</div>
+					<div>Probably the best moon image I've taken.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="160x_moon.jpg" width=500>
+					<br>
+					<div>Figure 32</div>
+					<div>160x magnification.</div>
+				</div>
+				<br>
+				<p>It's quite surreal, standing there, looking at such a high fidelity image of a rock hundreds of thousands of miles away. It almost doesn't seem real, like some sort of uncanny deception, and it certainly reminds you of how small you are.</p>
+				<p>Aside from the Earth's moon, I've been able to see Jupiter and its moons too. The image is clear enough to make out the prominent lines of Jupiter with the eye. Unfortunately, my iPhone camera doesn't seem capable of capturing a clear image. I also haven't taken the scope to a dark sky spot, so I haven't made an effort to view deep sky objects yet.</p>
+				<br>
+				<h2 style="text-decoration: underline">IV. Next steps</h2>
+				<p>Astrophotography has been on my mind during this entire build. In order to capture images of deep sky objects, one needs a nice camera and a telescope with a tracking mount to account for the Earth's rotation. I have some ideas on how I can motorize the mount I've just created, but haven't got around to implementing them yet. I also have a salary and no dependents, so the camera is only a click away. Stay tuned...</p>
 			</div>
-			<br>
-			<p>It's quite surreal, standing there, looking at such a high fidelity image of a rock hundreds of thousands of miles away. It almost doesn't seem real, like some sort of uncanny deception, and it certainly reminds you of how small you are.</p>
-			<p>Aside from the Earth's moon, I've been able to see Jupiter and its moons too. The image is clear enough to make out the prominent lines of Jupiter with the eye. Unfortunately, my iPhone camera doesn't seem capable of capturing a clear image. I also haven't taken the scope to a dark sky spot, so I haven't made an effort to view deep sky objects yet.</p>
-			<br>
-			<h2 style="text-decoration: underline">Next steps</h2>
-			<p>Astrophotography has been on my mind during this entire build. In order to capture images of deep sky objects, one needs a nice camera and a telescope with a tracking mount to account for the Earth's rotation. I have some ideas on how I can motorize the mount I've just created, but haven't got around to implementing them yet. I also have a salary and no dependents, so the camera is only a click away. Stay tuned...</p>
 		</div>
 	</body>
 </html>
