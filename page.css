@@ -17,6 +17,10 @@ body {
 	flex-direction: column;
 }
 
+h1 {
+	line-height: 2.2rem;
+}
+
 hr {
 	width: 60%;
 }
@@ -112,6 +116,10 @@ th, td {
 /* figure names */
 .img-container div {
 	color: var(--grey-color);
+}
+
+.img-container img {
+	max-width: 95%;
 }
 
 .header-text {
