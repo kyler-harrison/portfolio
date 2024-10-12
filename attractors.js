@@ -274,7 +274,6 @@ if (updateFunction == lorenz) {
     var historyN = 30;
 }
 
-
 var points = generateInitPoints();
 
 const history = [];
