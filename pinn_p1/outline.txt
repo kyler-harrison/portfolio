@@ -1,0 +1,13 @@
+intro to og pinns paper
+
+burger implementation in pytorch
+
+1d schrodiner implementation (TODO)
+
+intro to eigeNN paper
+
+eigeNN square well implementation
+
+discussion of attempts and failures
+
+discussion of next problems (if can get H working, try He -> actually interesting bc no analytical soln.)
