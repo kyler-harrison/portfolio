@@ -24,21 +24,7 @@
 			<div class="main-text-container">
 				<h3>PINNs: physics informed neural networks</h3>
                 <p>Maziar Raissi, Paris Perdikaris, and George Em Karniadakis introduced the physics informed neural network (PINN) in <a href="https://arxiv.org/pdf/1711.10561" target="_blank">this 2017 paper</a>. The PINN is a neural network trained to solve general nonlinear partial differential equations in a semi-supervised manner while respecting physical laws. This writeup details my understanding and Python implementation of some of the work presented in the paper. I go on to apply the techniques introduced in this paper to a new problem in <a href="../pinn_p2/pinn_p2.html" target="_blank">part 2</a>. A basic understanding of the fundamentals of neural networks, calculus, and differential equations is assumed.</p>
-				<p>Imagine a multivariate function $u$ that depends on the variables $x$ and $y$. An example of a linear partial differential equation might look something like:</p>
-				<div class="eqn-box">
-					<p>$$\begin{eqnarray}u(x, y) = \frac{d^2u}{dx^2} + \frac{d^2u}{dy^2} .\end{eqnarray}$$</p>
-				</div>
-				<p>Note that this can also be written with simplified notation:</p>
-				<div class="eqn-box">
-					<p>$$\begin{eqnarray}u = u_{xx} + u_{yy} .\end{eqnarray}$$</p>
-				</div>
-				<p>A solution $u(x, y)$ that satisfies this PDE is easy to find with some trial and error. One such solution is:</p>
-				<div class="eqn-box">
-					<p>$$\begin{eqnarray}u(x, y) = c_1e^x + c_2e^y ,\end{eqnarray}$$</p>
-				</div>
-				<p>where $c_1$ and $c_2$ are constants.</p>
-				<p>Another solution is $u=0$. This is called the trivial solution, and is usually not helpful, but this case will become important later.</p>
-				<p>Not all PDEs are as easy to solve as this simple example. There are many different methods used to find analytical solutions of PDEs, but not all PDEs can be solved (at least, there are many PDEs that nobody has solved yet). This is where approximation methods come in to help. For these hard-to-solve PDEs, several different <a href="https://en.wikipedia.org/wiki/Numerical_methods_for_partial_differential_equations" target="_blank">numerical methods</a> exist that can be used to approximate their solutions with sufficient accuracy. The PINNs paper focuses on training neural networks to approximate the solutions of PDEs that describe physical systems instead of using traditional numerical methods.</p>
+				<p>There are many different methods used to find analytical solutions of PDEs, but not all PDEs can be solved (at least, there are many PDEs that nobody has solved yet). This is where approximation methods come in to help. For these hard-to-solve PDEs, several different <a href="https://en.wikipedia.org/wiki/Numerical_methods_for_partial_differential_equations" target="_blank">numerical methods</a> exist that can be used to approximate their solutions with sufficient accuracy. The PINNs paper focuses on training neural networks to approximate the solutions of PDEs that describe physical systems instead of using traditional numerical methods.</p>
 				<br>
 				<h3>Burgers' equation</h3>
 				<p>The paper begins by applying a PINN to solve <a href="https://en.wikipedia.org/wiki/Burgers%27_equation">Burgers' equation</a> in one spatial dimension:</p>
