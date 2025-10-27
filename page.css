@@ -122,6 +122,10 @@ th, td {
 	max-width: 95%;
 }
 
+.img-container video {
+	width: 95%;
+}
+
 .header-text {
 	color: var(--grey-color);
 	font-size: 1.3rem;
