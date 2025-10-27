@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>PINNs Part 2: Solving the Infinite Square Well Schrodinger Equation</title>
+		<link href="../page.css" rel="stylesheet" type="text/css">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script type="text/x-mathjax-config">
+			MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+    </script>
+	  <script type="text/javascript"
+       src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+	</head>
+	<body>
+		<ul class="nav-bar">
+			<li class="nav-li nav-li-right"><a class="nav-a" href="../index.html">Kyler Harrison</a></li>
+		</ul>
+		<div class="content">
+			<div class="title-container">
+				<h1><mark>NOTE ROUGH DRAFT</mark></h1>
+				<h1>PINNs Part 2: Solving the Infinite Square Well Schrodinger Equation</h1>
+				<p class="header-text">06/28/2025</p>
+				<hr>
+			</div>
+			<div class="main-text-container">
+				<p>What interests me most about the physics informed neural network (PINN) is its potential to approximately solve differential equations representing a wide range of different physical phenomena. I decided to see if the methods described in <a href="../pinn_p1/pinn_p1.html" target="_blank">PINNs Part 1: Existing Work</a> could be extended to solve the Schrodinger equation. The original PINNs paper claims that their approach can be used to solve general non-linear partial differential equations. The Schrodinger equation, on the other hand, is a linear eigenvalue problem, and presents new challenges in the PINN approach. I undertook and ultimately overcame most of these challenges over the course of a few months.</p>
+				<p>All code used for this writeup can be found in this <a href="https://github.com/kyler-harrison/Schrodinger-PINNs/tree/main" target="_blank">GitHub repo</a>.</p>
+				<br>
+				<h3>Particles and the Schrodinger equation</h3>
+				<p>At a fundemental level, everything we humans physically interact with is some conglomeration of atoms (humans are a conglomeration of atoms too, of course). Atoms make up stuff. All stuff that is stuff, is composed of atoms which interact with each other in interesting and unintuitive ways. An atom consists of neutrons, protons, and electrons, all bound to each other within some space. Every atom has a nucleus that contains neutron(s) and proton(s) that is surrounded by a "cloud" of electron(s). The electron is a fundamental particle of nature and determining its behavior is the focus of this writeup.</p>
+				<p>In the world of quantum mechanics, reality is strange and probabilistic. When talking about a particle that follows the laws of quantum mechanics, you can't say where the particle is and what it is doing, but where it <i>probably</i> is and what it <i>probably</i> is doing. All information and derivations in the following section come mostly from <a href="https://doi.org/10.1017/9781316995433" target="_blank">Introduction to Quantum Mechanics (Third Edition) by David J. Griffiths and Darrell F. Schroeter</a>, a surpirsingly readable textbook.</p>
+				<p>A particle is defined by its wavefunction, $\Psi$. The wavefunction is defined by the time-dependent Schrödinger equation</p>
+				<div class="eqn-box">
+					<p>$$\begin{eqnarray}i \hbar \frac{\partial}{\partial t} \Psi = \hat{H}\Psi ,\end{eqnarray}$$</p>
+				</div>
+				<p>where $i$ is the imaginary number, $\hbar$ is the reduced Planck's constant, and $\hat{H}$ is the Hamiltonian operator. Solving this equation for $\Psi$ gives the state of the particle which can be operated on to determine the probability of its position and momentum. Where this equation comes from is beyond the scope of this writeup, but if you're so inclined, you can read Schrödinger's original proposal of the equation <a href="https://ee.sharif.edu/~sarvari/25290/1926-Schrodinger.pdf" target="_blank">here</a> (though, you may need to have read a quantum mechanics textbook to get what he's talking about, and even then, it's still not simple).</p>
+				<p>For more reasons I won't explain, a separation of variables allows the Schrödinger equation to be split into different position and time-dependent terms. I'll skip some more details and tell you that the time-independent (and position-dependent) Schrödinger equation is</p>
+				<div class="eqn-box">
+					<p>$$\begin{eqnarray} \hat{H}\psi = E\psi , \end{eqnarray}$$</p>
+				</div>
+				<p>where $\psi$ is the time-independent wave function and $E$ is the energy eigenvalue. This writeup only focuses on the time-independent Schrödinger equation.</p>
+				<p>This PDE can be solved by finding an eigenfunction $\psi$ and its corresponding eigenvalue $E$. Notice that we will look for a solution, not the solution. That is because this is a linear PDE. When a PDE is linear, it basically means that if you find a solution, you can multiply that solution by some constant and get another solution, meaning there are infinitely many solutions (since there are infinitely many constants).</p>
+				<p>There are two unknowns to find when solving the Schrodinger equation: the eigenfunction, $\psi$, and the corresponding energy eigenvalue, $E$. This differs from the original PINNs paper because it only focused on predicting the function that solved a differential equation.</p>
+				<p>The remainder of this writeup focuses on adapting the PINNs technique to solve the Schrodinger equation applied to a common system presented in quantum mechanics textbooks in 1D, 2D, and 3D.</p>
+				<br>
+				<h3>Adapting the PINN approach to a linear eigenvalue problem</h3>
+				<p>Similar to the approach taken to solve Burger's equation in <a href="../pinn_p1/pinn_p1.html" target="_blank">Part 1</a>, the goal here is to train a neural network to predict a $\psi$ that satisfies the Schrodinger equation using position as an input.</p>
+				<p>But there's a problem: we have another unknown to find, $E$.</p>
+				<p>I searched for other papers that use PINNs to solve eigenvalue problems and found <a href="https://arxiv.org/pdf/2203.00451" target="_blank">Physics-Informed Neural Networks for Quantum Eigenvalue Problems</a> by Jin, Mattheakis, and Protopapas to be the most relevant. I also found an older/slightly different version <a href="https://arxiv.org/pdf/2010.05075" target="_blank">here</a> which explained certain parts of the other paper a bit more in-depth.</p>
+				<p>This paper proposes using an affine layer (dense layer that takes 1 as an input and produces a single output) at the start of the network to predict $E$, and then combines $E$ with position data ($x$ in this 1D example) as the input to the PINN. This creates a trainable layer in the PINN for finding $E$.</p>
+				<div class="img-container">
+					<img src="drive_E_arc.png">
+					<br>
+					<div>Example network architecture using a predicted $E$ as an input to the PINN.</div>
+				</div>
+				<p>To find the energy eigenvalue along with the wavefunction, the authors introduce the loss term,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} L_{drive} = e^{-E + c}, \end{equation}$$</p>
+				</div>
+				<p>to promote the discovery of a correct $E$. The term $c$ is a value that is incremented across training to promote larger values of $E$. In practice, the PINN's predictions are penalized heavily when $E \lt c$ and $L_{drive}$ is "more satisfied" when $E \ge c$. Since there are infinitely many solutions to the equation, we have to scan across values of $E$ to find $\psi$ solutions. The aforementioned paper scans across $E$ values by incrementing $c$ across training. I implemented this method in my own code and was able to replicate their success. However, I found that $L_{drive}$ depended heavily on the amount that $c$ was incremented by across training and the initial value of $E$. Effectively, this loss term makes the network scan across values of $E$ in whatever increment of $c$ you decide across training. I realized that this is just a more complicated way to search across a bunch of pre-determined $E$ values with the added detriment that $L_{drive}$ has a tendency to blow up if the network does not adjust its predicted value of $E$ quickly enough. This "explosion" in $L_{drive}$ often appeared to have led to inconsistent results in training, though the network did figure out what to do correctly most of the time.</p>
+				<p>So, I decided to ditch the approach with $L_{drive}$ and simply scan across a range of $E$ values during training instead. The basic algorithm:</p>
+				<ul>
+					<li>set minimum value of $E$, $E_{min}$, and maximum value of $E$, $E_{max}$</li>
+					<li>generate set of $E$ values ranging from $E_{min}$ to $E_{max}$ in step size $\delta_E$</li>
+					<li>iterate across set of $E$ values, fully train PINN with each $E$ as a fixed input, calculate and save loss values</li>
+					<li>after training PINNs on all values of $E$, determine which PINN(s) + value(s) of $E$ satisfy loss constraints the best</li>
+				</ul>
+				<p>is simple, and maybe a bit computationally inefficient, but proves effective. This algorithm requires you to roughly know the expected range of energy values your system can have along with an appropriate energy increment, $\delta_E$.</p>
+				<p>All PINNs used in the problems below are simple, fully-connected feed-forward neural networks that make use of a sin activation function.</p>
+				<br>
+				<h3>1D Infinite Square Well</h3>
+				<p>Imagine that a particle is confined to exist in the 1D space $x \in [0, a]$. The particle cannot escape this "well" because it does not have enough energy to overcome the boundaries of the "potential well" it is trapped in.</p>
+				<div class="img-container">
+					<img src="1d_viz.png">
+					<br>
+					<div>The particle exists between $0$ and $a$ and cannot be in the grey region.</div>
+				</div>
+				<p>Formally, this system is described by the potential,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} V(x) = \begin{cases} 0, &0 \leq x \leq a \\ \infty, &\text{else} \end{cases}\end{equation}$$</p>
+				</div>
+				<p>and outside of the well,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} \psi(x) = 0. \end{equation}$$</p>
+				</div>
+				<p>The Hamiltonian operator, $\hat{H}$, is given,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} \hat{H} = -\frac{\hbar^2}{2m} \frac{d^2}{dx^2} + V(x),\end{equation}$$</p>
+				</div>
+				<p>where $m$ is the mass of the particle.</p>
+				<p>We know that the wavefunction of the particle does not exist outside of the well, so we only concern ourselves with solving the equation when $V(x)=0$. After applying $\hat{H}$, we can write the Schrodinger equation,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} -\frac{\hbar^2}{2m} \frac{d^2 \psi}{dx^2} = E \psi.\end{equation}$$</p>
+				</div>
+				<p>The analytical solution is given,</p>
+				<div class="eqn-box">
+					<p>$$\begin{eqnarray} \psi_n(x) &=& \sqrt{\frac{2}{a}} sin(\frac{n \pi}{a} x), \\ 
+						E_n &=& \frac{n^2 \pi^2 \hbar^2}{2 m a^2},
+						\end{eqnarray}$$</p>
+				</div>
+				<p>where $n \in [1, 2, ...]$ is the quantum number representing the energy level.</p>
+				<p>Okay, let's apply the new eigenvalue PINN algorithm to this problem.</p>
+				<p>First, we need to define to define the units of $x$, $\hbar$, and $m$. To keep things simple, I will use Coulomb units, which define the physical dimensions,</p>
+				<div class="eqn-box">
+					<p>$$\begin{eqnarray} \text{mass} &=& m \text{ (electron)}, \\ 
+						\text{length} &=& \frac{\hbar^2}{mC}, \\
+						\text{energy} &=& \frac{mC^2}{\hbar^2},
+						\end{eqnarray}$$</p>
+				</div>
+				<p>which allows us to set,</p>	
+				<div class="eqn-box">
+					<p>$$\begin{equation} m=\hbar=C=\frac{e^2}{4 \pi \varepsilon_0}=1 .\end{equation}$$</p>
+				</div>
+				<p>This lets us write,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} \frac{\hbar^2}{2m} = \frac{1}{2},\end{equation}$$</p>
+				</div>
+				<p>and we can just arbitrarily call our units of $x$ to be length from $0$ to $a$.</p>
+				<p>These units are nice and simple, but it took me an incredibly long time to figure out the correct unit system and I experienced an endless amount of issues as a consequence. For this 1D problem, having all of these units defined correctly isn't a big deal, but it will become very important later.</p>
+				<p>Next, we need to generate input data. This is easy, let $a=1$ and simply generate values of $x$ between $0$ and $a$. In practice, I generated $x$ values in steps of $0.01$. During training, all $x$ are perturbed by a small amount of noise and then passed into the PINN. The perturbation of inputs prevents the model from overfitting.</p>
+				<p>Note that we haven't generated a set of collocation and boundary condition data like in the original PINNs paper. I opted to just use collocation data and scale the PINN predictions to $0$ at the boundaries using the parametric function presented in the quantum eigenvalue paper,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} g(x) = (1 - e^{-(x - x_{min})}) (1 - e^{x - x_{max}}) \end{equation},$$</p>
+				</div>
+				<p>where $x_{min}=0$ and $x_{max}=a$. Given a PINN output $u(x)$, the final prediction of the wavefunction, $\hat{\psi}(x)$, is given by,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} \hat{\psi}(x) = g(x)u(x). \end{equation}$$</p>
+				</div>
+				<p>Letting $\hat{\psi}$ represent the PINN's predicted wavefunction value and moving all terms of the differential equation to one side,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} f = E \hat{\psi} + \frac{\hbar^2}{2m} \frac{d^2 \hat{\psi}}{dx^2} .\end{equation}$$</p>
+				</div>
+				<p>The differential equation (Schrodinger equation) loss is defined,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} L_{f} = \frac{1}{n_{f}} \sum_{i=0}^{n_{f}} f_i^2 , \end{equation}$$</p>
+				</div>
+				<p>where $n_f$ is the number of predictions and $f_i$ is the $f$ calculation of the $i$th prediction.</p>
+				<p>In addition to this loss term, I define a regularization term that penalizes trivial predictions,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} L_{trivial} = \frac{1}{\frac{1}{n_f} \sum_{i=0}^{n_f} {\hat{\psi_i}}^2} . \end{equation}$$</p>
+				</div>
+				<p>The overall loss of the network's predictions is,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} L = L_{f} + L_{trivial} . \end{equation}$$</p>
+				</div>
+				<p>$L$ cannot reach $0$ because of $L_{trivial}$. $L_{f}$ is the actual measure of the PINN's performance, but $L_{trivial}$ is necessary to keep the PINN from predicting $0$ for every input (the easiest way to minimize $L_{f}$).</p>
+				<p>For physics reasons that I won't get into, wavefunctions must meet be orthonormal to each other,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} \int \psi_{m}(x) * \psi_{n}(x) dx = \delta_{mn} . \end{equation}$$</p>
+				</div>
+				<p>For a single solution in the 1D well, $\psi$, this means,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} \int_{0}^{a} |\psi(x)|^2 dx = 1 . \end{equation}$$</p>
+				</div>
+				<p>I tried to introduce a loss term that would incentivize the PINN to predict normalized wavefunctions, but couldn't seem to get the PINN to converge to good solutions.</p>
+				<p>With the aforementioned loss terms, the PINN was able to predict correct values of $E$ alongside the correct shapes of the corresponding wavefunctions. But, these wavefunctions did not meet the normalization condition and appeared to be scaled versions of the normalized analytical solutions. I had a hunch that,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} \psi = c \hat{\psi},\end{equation}$$</p>
+				</div>
+				<p>where $\psi$ is the true analytical soluion, $\hat{\psi}$ is the PINN's prediction, and $c$ is some unknown constant that relates the two wavefunctions. I will call $c$ the "prediction normalization constant."</p>
+				<p>With this assumption and the normalization condition, I figured that I could find the approximate value of $c$, and thus derive an approximate analytical solution from the prediction without knowing the analytical solution itself.</p>
+				<p>The normalization condition integral can be approximated with a sum across all $x$ values in our system's domain,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} \sum_{i=0}^{n_a} \psi^2(x_i)\delta_x \approx 1, \end{equation}$$</p>
+				</div>
+				<p>where $n_a$ is the number of $x$ values in the approximate domain, $x_i$ is the $i$th $x$ value in the approximate domain, and $\delta_{x}$ is the step size between each $x_i$.</p>
+				<p>From the assumed relationship between $\psi$ and $\hat{\psi}$,</p>
+				<div class="eqn-box">
+					<p>$$\begin{eqnarray} \sum_{i=0}^{n_a} \psi^2(x_i)\delta_x &\approx& c^2\sum_{i=0}^{n_a}\hat{\psi}^2(x_i)\delta_x \\
+\Rightarrow c &\approx& \frac{1}{\sqrt{\delta_x \sum_{i=0}^{n_a} \hat{\psi}^2(x_i) }} \end{eqnarray}$$</p>
+				</div>
+				<p>This looks more complicated than doing the calculation in practice. All this equation says is, "for each $x_i$ in the array $[0, ..., a]$, get the prediction $\hat{\psi}(x_i)$, square it, sum them all up, then take 1 divided by the sqrt of that sum to get $c$." </p>
+				<p>This may seem like a convoluted way to get a normalized prediction, but it works if the assumption $\psi = c \hat{\psi}$ holds, and I feel like it's clever, so, this is what I stuck with.</p>
+				<p>With all of the above defined, the PINN can finally be trained. I scanned across $E$ values from $1$ to $23$ in increments of $0.1$, training a PINN on each value of $E$ with $1000$ training steps. The following video illustrates how the PINN learned solutions across training (NOTE that $\hat{u} \equiv \hat{\psi}$ and Schrodinger loss $\equiv L_{f}$).</p>
+				<div class="img-container">
+					<video width="95%" controls>
+						<source src="1D_train_vid.mp4" type="video/mp4">
+					</video>
+					<br>
+					<div>PINN training progress on solving the Schrodinger equation of the 1D infinite square well.</div>
+				</div>
+				<p>The training progress video above scans across the first three known analytical solution $E$ values. You can see how the $L_{f}$ of the PINN's predictions drops steeply when the PINN is trained on the correct analytical $E$ values.</p>
+				<p>I don't love the algorithm I came up with to search over $E$ values because it is computationally inefficient. In the training above, I fit $230$ PINNs ($230$ $E$ values scanned), and find 3 approximately correct solutions. I'd like to say I had some revelation that led me to develop a better method to determine $E$, but that didn't happen.</p>
+				<p>The training above increments $E$ by a fairly large step, $0.1$, and may not allow the network to find accurate-enough solutions since I can't guarantee a correct value of $E$ beyond a single decimal place. This made me wonder if I could run a wide search over $E$ like above, and then "zoom in" on the values of $E$ that the PINN made the best wavefunction predictions with.</p>
+				<p>The PINNs trained above converged on $E_1=2.4$, $E_2=9.4$, and $E_3=21.1$. The corresponding correct analytical solutions to two decimal places are $E_1=2.35$, $E_2=9.39$, and $E_3=21.12$, respectively. I retrained on $E$ values between $[2.3, 2.5]$, $[9.3, 9.5]$, $[21, 21.2]$ in $E$ increments of $0.01$. As expected the PINNs were able to find the correct wavefunctions with greater accuracy in $E$. The PINNs converged to best predictions on $E_1=2.35$, $E_2=9.40$, and $E_3=21.12$. This process of retraining and "zooming in" on the best found $E$ values can be extended to attain even higher levels of accuracy in determining $E$.</p>
+				<p>To visualize the PINN's convergence to the analytical solutions more clearly, here is a video showing training that only searches over the first three analytical $E$ values very closely alongside the nearest correct analytical solution.</p>
+				<div class="img-container">
+					<video width="95%" controls>
+						<source src="1D_analytical_train_short.mp4" type="video/mp4">
+					</video>
+					<br>
+					<div>PINN training progress on "zoomed in" $E$ values.</div>
+				</div>
+				<p>In the video above, I plot the non-normalized prediction, analytical solution (normalized by definition), and sign-corrected normalized prediction. The PINN sometimes predicts the negative version of the correct wavefunction, which still solves the Schrodinger equation the same as the positive version, it's just a convention to use the positive version when writing the analytical solution. I flip signs where relevant above for a better visualization. You can see how the dashed green line almost perfectly overlaps with the analytical solution, qualitatively indicating solid PINN convergence. Quantitatively, the three best PINNs trained above attain $L_{f}$ values on the order of $10^{-3}$ to $10^{-2}$. This is comparable to the results attained in the original PINNs paper as described in <a href="../pinn_p1/pinn_p1.html" target="_blank">Part 1</a>.</p>
+				<p>Since I have the analytical solution for this problem, the $MSE$ on predictions is easy to find. The $MSE$ values for each PINN's predictions above are on the order of $10^{-4}$, $10^{-3}$, and $10^{-2}$, respectively. It seems like the PINN's accuracy decreases with increasing $n$, but this might just be an indicator that the PINN needed more time to converge to a correct solution.</p>
+				<p>All code used for this section can be found in this <a href="https://github.com/kyler-harrison/Schrodinger-PINNs/blob/main/1D_well/inf_sq_well_E_scan.ipynb" target="_blank">notebook</a>.</p>
+				<br>
+				<h3>2D Infinite Well</h3>
+				<p>The particle in a well problem can be extended to 2D. To do so, we say that the particle is now trapped in an xy rectangle. For simplicity's sake, we'll say this rectangle is a square of dimensions $a$ x $a$.</p>
+				<div class="img-container">
+					<img src="2d_viz.png">
+					<br>
+					<div>The particle exists somewhere in the $a$ x $a$ rectangle and cannot exist outside in the grey shaded region.</div>
+				</div>
+				<p>Formally,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} V(x, y) = \begin{cases} 0, &0 \leq x \leq a \text{ and } 0 \leq y \leq a \\ \infty, &\text{else} \end{cases}\end{equation}$$</p>
+				</div>
+				<p>and outside of the well,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} \psi(x, y) = 0. \end{equation}$$</p>
+				</div>
+				<p>The Hamiltonian operator is now,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} \hat{H} = -\frac{\hbar^2}{2m} (\frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2}) + V(x, y).\end{equation}$$</p>
+				</div>
+				<p>Once again, we only care about the region where the particle's wavefunction exists and $V(x, y) = 0$, so the Schrodinger equation becomes,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} -\frac{\hbar^2}{2m} (\frac{\partial^2 \psi}{\partial x^2} + \frac{\partial^2 \psi}{\partial y^2}) = E \psi.\end{equation}$$</p>
+				</div>
+				<p>The analytical solution is given,</p>
+				<div class="eqn-box">
+					<p>$$\begin{eqnarray} \psi(x, y) &=& \frac{2}{a} sin(\frac{n_x \pi}{a}x) sin(\frac{n_y \pi}{a}y), \\ 
+						E_n &=& \frac{\hbar^2 \pi^2}{2ma^2} (n_x^2 + n_y^2), \end{eqnarray}$$</p>
+				</div>
+				<p>for quantum numbers $n_x \in [1, 2, ...]$ and $n_y \in [1, 2, ...]$. I'll define $n=n_x^2 + n_y^2$ and $N=n_x + n_y$ to keep track of the specific energy level.</p>
+				<p>It is interesting to note that the additional dimension in this problem results in degenerate states in each energy level. This means there can be multiple valid wavefunctions that solve the equation with the same energy eigenvalue. For simplicity's sake, I aim to train a PINN to find a single solution for each energy level, and just accept that degenerate states exist and that the PINN can converge to different correct wavefunctions for the same $E$.</p>
+				<p>Initially, I tried to handle the boundary conditions of this problem with an altered version of the parametric scaling function described in the 1D section. I couldn't seem to get the PINN to converge to good results with this method, so I went back to using the method of defining collocation and boundary condition data that the original PINNs paper introduced. I somewhat arbitrarily decided on a $10$:$1$ split of collocation:boundary condition data points.</p>
+				<p>The boundary data outlines the well:</p>
+				<div class="img-container">
+					<img src="2d_bc.png">
+					<br>
+					<div>2D well boundary condition data.</div>
+				</div>
+				<p>The collocation data contains points inside the well:</p>
+				<div class="img-container">
+					<img src="2d_coll.png">
+					<br>
+					<div>2D well collocation data.</div>
+				</div>
+				<p>As the number of dimensions increases, the amount of data required to respresent the space of our system increases. Determining a reasonably small enough step size betwen each point in the square above is a matter of experimentation and introduces a tradeoff. On the one hand, you want to generate enough data to represent your system, but on the other hand, you don't want to generate too much data because that may require the PINN to train for an unreasonable amount of time in order to achieve good convergence.</p>
+				<p>Again, $f$ is defined by moving all terms in the Schrodinger equation to one side,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} f = E \hat{\psi}_f + \frac{\hbar^2}{2m} (\frac{\partial^2 \hat{\psi}_f}{\partial x^2} + \frac{\partial^2 \hat{\psi}_f}{\partial y^2}) ,\end{equation}$$</p>
+				</div>
+				<p>where $\hat{\psi}_f$ represents the PINN's predicted wavefunction value on a collocation point. The corresponding loss is defined,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} L_{f} = \frac{1}{n_{f}} \sum_{i=0}^{n_{f}} f_i^2 . \end{equation}$$</p>
+				</div>
+				<p>With the re-introduction of the b.c. + collocation data split, $n_f$ now represents the number of data points in the collocation data set and $n_{bc}$ represents the number of points in the b.c. data set. The loss for the b.c. data is the same $MSE$ used from the original PINNs paper,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} L_{bc} = \frac{1}{n_{bc}} \sum_{i=0}^{n_{bc}} \hat{\psi}_{bc, i}^2 , \end{equation}$$</p>
+				</div>
+				<p>where $\hat{\psi}_{bc, i}$ is the PINN's prediction of the $i$th b.c. data point.</p>
+				<p>The trivial prediction loss term only applies to predictions made on points in the collocation data set (since the prediction at the b.c. is supposed to be $0$),</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} L_{trivial} = \frac{1}{\frac{1}{n_f} \sum_{i=0}^{n_f} {\hat{\psi}_{f, i}}^2} . \end{equation}$$</p>
+				</div>
+				<p>The overall loss is now defined,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} L = L_{f} + L_{bc} + L_{trivial} . \end{equation}$$</p>
+				</div>
+				<p>The normalization condition for this problem is,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} \int \int |\psi(x, y)|^2 dxdyd = 1. \end{equation}$$</p>
+				</div>
+				<p>The same logic described in the 1D case above can be extended to update the prediction normalization constant calculation,</p>
+				<div class="eqn-box">
+					<p>$$\begin{eqnarray} \sum_{j=0}^{n_a} \sum_{i=0}^{n_a} \psi^2(x_i, y_j) \delta_x \delta_y &\approx& c^2 \sum_{j=0}^{n_a} \sum_{i=0}^{n_a}\hat{\psi}^2(x_i, y_j) \delta_x \delta_y \\
+						\Rightarrow c &\approx& \frac{1}{\sqrt{\delta_x \delta_y \sum_{j=0}^{n_a} \sum_{i=0}^{n_a} \hat{\psi}^2(x_i, y_j) }} \end{eqnarray}$$</p>
+				</div>
+				<p>Since we have a square of data where $\delta_x = \delta_y$, the double sum in the denominator becomes a single sum across all generated data points in code.</p>
+				<p>Through some trial and error, I found that the PINN required about $5$ minutes of training to converge to a good-enough solution for a single value of $E$. Running a sufficiently large scan over enough $E$ values to find a few solutions requires several uninterrupted hours of training time. This is the main issue with the $E$ scan algorithm: it's computationally intensive and inefficient since you must scan over many incorrect $E$ values before the PINN finds a correct solution. In order to shorten the training time, I cheated a bit and just scanned over $3$ $E$ values near the first $4$ true $E$ values.</p>
+				<p>Since $L_{trivial}$ is just a regularization term meant to push the PINN to predict non-trivial solutions, I define the actual performance of the PINN by the loss term,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} L_{ovr} = L_{f} + L_{bc}. \end{equation}$$</p>
+				</div>
+				<p>In code I referred to this as "loss_ovr_no_reg,"</p>
+				<div class="img-container">
+					<img src="2d_loss_ovr.png">
+					<br>
+					<div>$L_{ovr}$ across training.</div>
+				</div>
+				<br>
+				<div class="img-container">
+					<img src="2d_E.png">
+					<br>
+					<div>$E$ across training.</div>
+				</div>
+				<p>The analytical $E$ values for the first $4$ solutions are $9.87$, $24.67$, $39.48$, and $49.35$, respectively. In this training run, I set the scan to look over the values $E-0.1$, $E$, $E+0.1$ for each analytical $E$ (i.e. the first scan went across $9.67$, $9.77$, $9.87$). My idea was that the PINN would converge to the best $L_{ovr}$ on the middle $E$ value in each set of $3$ $E$ values.</p>
+				<p>Looking at the plot of $L_{ovr}$ above, you can see that the PINN does minimize $L_{ovr}$ with the correct $E$ for the first two energy levels, but fails to do so with the last two $E$ values. That being said, the PINN still finds very accurate wavefunctions for each energy level. The plots below show $\psi(x,y)$ in the z-axis and the color of each point is the probability density of the wavefunction, $|\psi(x,y)|^2$.</p>
+				<div class="img-container">
+					<img src="2d_N=1_pred.png">
+					<br>
+					<div>$N=1$ predictions.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="2d_N=1_an.png">
+					<br>
+					<div>$N=1$ analytical solution.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="2d_N=2_pred.png">
+					<br>
+					<div>$N=2$ predictions.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="2d_N=2_an.png">
+					<br>
+					<div>$N=2$ analytical solution.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="2d_N=3_pred.png">
+					<br>
+					<div>$N=3$ predictions.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="2d_N=3_an.png">
+					<br>
+					<div>$N=3$ analytical solution.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="2d_N=4_pred.png">
+					<br>
+					<div>$N=4$ predictions.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="2d_N=4_an.png">
+					<br>
+					<div>$N=4$ analytical solution.</div>
+				</div>
+				<br>
+				<p>Visually, the predicted wavefunctions look identical to the analytical solutions. The Schrodinger equation loss ($L_{f}$) for these $4$ PINNs ranges between the orders of $10^{-4}$ to $10^{-2}$. The MSE values of these predictions against the analytical solutions range between the orders of $10^{-7}$ to $10^{-3}$.</p>
+				<p>It seems like the PINN has a harder time converging to good solutions with increasing $N$. Though, I could train these higher energy PINNs longer and could tune the hyperparameters of the network itself to achieve better results. Longer training time may result in the PINN settling on the correct $E$ value as well. For now, I'm satisfied with seeing some decent convergence here and am convinced that this PINN approach is effective enough.</p>
+				<p>All code used for this section can be found in this <a href="https://github.com/kyler-harrison/Schrodinger-PINNs/blob/main/2D_well/2D_inf_well_bc_coll.ipynb" target="_blank">notebook</a>.</p>
+				<br>
+				<h3>3D Infinite Well</h3>
+				<p>To extend the paricle in a well problem to 3D, another dimension is added. Now the particle is trapped in a 3D rectangular prism. For simplicity's sake, I use a cube of dimensions $a$ x $a$ x $a$ and let $a=1$. I'll leave the visualization to your own brain for this one.</p>
+				<p>Formally,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} V(x, y, z) = \begin{cases} 0, &0 \leq x \leq a, \text{ } 0 \leq y \leq a, \text{ } 0 \leq z \leq a \\ \infty , &\text{else} \end{cases}\end{equation}$$</p>
+				</div>
+				<p>Another gradient for the z dimension is added to the Hamiltonian,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} \hat{H} = -\frac{\hbar^2}{2m} (\frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2} + \frac{\partial^2}{\partial z^2}) + V(x, y, z).\end{equation}$$</p>
+				</div>
+				<p>We again only care when $V(x, y, z)=0$, and the Schrodinger equation becomes,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} -\frac{\hbar^2}{2m} (\frac{\partial^2 \psi}{\partial x^2} + \frac{\partial^2 \psi}{\partial y^2} + \frac{\partial^2 \psi}{\partial z^2}) = E \psi.\end{equation}$$</p>
+				</div>
+				<p>The analytical solution is given,</p>
+				<div class="eqn-box">
+					<p>$$\begin{eqnarray} \psi(x, y, z) &=& \sqrt{\frac{8}{a^3}} sin(\frac{n_x \pi}{a}x) sin(\frac{n_y \pi}{a}y) sin(\frac{n_z \pi}{a}z), \\ 
+						E_n &=& \frac{\hbar^2 \pi^2}{2ma^2} (n_x^2 + n_y^2 + n_z^2) .\end{eqnarray}$$</p>
+				</div>
+				<p>A cube of data points is generated to represent the 3D well that the particle exists in. Again, I generate sets of collocation and boundary condition data.</p>
+				<div class="img-container">
+					<img src="3d_cube_coll.png">
+					<br>
+					<div>Cube collocation data.</div>
+				</div>
+				<br>
+				<div class="img-container">
+					<img src="3d_cube_bc.png">
+					<br>
+					<div>Cube boundary condition data.</div>
+				</div>
+				<br>
+				<p>$f$ is defined,</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} f = E \hat{\psi}_f + \frac{\hbar^2}{2m} (\frac{\partial^2 \hat{\psi}_f}{\partial x^2} + \frac{\partial^2 \hat{\psi}_f}{\partial y^2} + \frac{\partial^2 \hat{\psi}_f}{\partial z^2}) .\end{equation}$$</p>
+				</div>
+				<p>The prediction normalization constant calculation extends to a third dimension,</p>
+				<div class="eqn-box">
+					<p>$$\begin{eqnarray} \sum_{k=0}^{n_a} \sum_{j=0}^{n_a} \sum_{i=0}^{n_a} \psi^2(x_i, y_j, z_k) \delta_x \delta_y \delta_z &\approx& c^2 \sum_{k=0}^{n_a} \sum_{j=0}^{n_a} \sum_{i=0}^{n_a}\hat{\psi}^2(x_i, y_j, z_k) \delta_x \delta_y \delta_z \\
+						\Rightarrow c &\approx& \frac{1}{\sqrt{\delta_x \delta_y \delta_z \sum_{k=0}^{n_a} \sum_{j=0}^{n_a} \sum_{i=0}^{n_a} \hat{\psi}^2(x_i, y_j, z_k) }} \end{eqnarray}$$</p>
+				</div>
+				<p>This looks like a mess, but again the triple summation in the denominator is reduced to a single sum across all data points in the cube in code.</p>
+				<p>The loss terms for this PINN are the same used in the 2D case.</p>
+				<p>Considering the large range of $E$ values in the first 4 analytical solutions to this problem, I once again only searched over $E$ values near the analytical $E$. The PINN was able to find correct-looking solutions for the first 3 energy levels, but did not converge to the correct $E$ value for each, and did not find the correct wavefunction for the 4th energy level.</p>
+				<div class="img-container">
+					<img src="3d_N=1_pred.png">
+					<br>
+					<div>$N=1$ predictions.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="3d_N=1_an.png">
+					<br>
+					<div>$N=1$ analytical solution.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="3d_N=2_pred.png">
+					<br>
+					<div>$N=2$ predictions.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="3d_N=2_an.png">
+					<br>
+					<div>$N=2$ analytical solution.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="3d_N=3_pred.png">
+					<br>
+					<div>$N=3$ predictions.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="3d_N=3_an.png">
+					<br>
+					<div>$N=3$ analytical solution.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="3d_N=4_pred.png">
+					<br>
+					<div>$N=4$ predictions.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="3d_N=4_an.png">
+					<br>
+					<div>$N=4$ analytical solution.</div>
+				</div>
+				<br>
+				<br>
+				<p>For visualization purposes, the plots above only show points that have probability densities above a certain threshold (you would just see an isometric view of a cube if I didn't subset the predictions and solutions).</p>
+				<p>The $L_f$ values on these predictions ranges from the order of $10^{-3}$ to $10^{-2}$ with analytical MSE values between $10^{-1}$ to $10^{0}$. In the prediction plots above, the predicted probability densities, $|\hat{\psi}(x, y, z)|^2$, appear to be half of the analytical solution. I'm not sure if this is an error in my calculation of the prediction normalization constant or if the PINN just didn't learn the correct scale in its predictions. It's also interesting to note that the PINN in the $N=4$ case learned to predict the shape of a degenerate state of the $N=3$ solution (specifically the $n_x=1$, $n_y=1$, $n_z=3$ state). Clearly, this PINN approach struggled to converge to correct solutions as well as the 1D and 2D cases. Longer training time and more complex network architectures may help the PINN scale good predicted solution convergence as the dimensions of the system increase.</p>
+				<p>All code used for this writeup can be found in this <a href="https://github.com/kyler-harrison/Schrodinger-PINNs/blob/main/3D_well/3D_inf_cubical_well_bc_coll.ipynb" target="_blank">GitHub repo</a>.</p>
+				<br>
+				<h3>Limitations of this approach and next steps</h3>
+				<p>As stated before, I don't love the $E$ search algorithm that I came up with and would much rather develop an approach that enables the PINN to learn both $E$ and $\psi$ on its own. The PINNs trained on the higher dimension infinite well problems struggled to make significantly better predictions when the correct $E$ value was used as an input, and $L_f$ was larger as the number of dimensions in the system increased.</p>
+				<p>In the 3D well problem described above, I decided not to focus on optimizing for best results and fixing the potential issues with the approach because I wanted to move onto implementing a PINN to solve the Hydrogen atom Schrodinger equation, a significantly more complicated 3D problem. For now, I'm satisfied with the proof of concept I've demonstrated here with this PINN approach and will further refine it in my future work.</p>
+				<p><b>TODO PART 3 LINK</b></p>
+            </div>
+		</div>
+	</body>
+</html>
