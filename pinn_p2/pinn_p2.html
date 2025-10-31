@@ -114,7 +114,11 @@
 				<div class="eqn-box">
 					<p>$$\begin{equation} \frac{\hbar^2}{2m} = \frac{1}{2},\end{equation}$$</p>
 				</div>
-				<p>and we can just arbitrarily call our units of $x$ to be length from $0$ to $a$.</p>
+				<p>and the energy level can be expressed as</p>
+				<div class="eqn-box">
+					<p>$$\begin{equation} E_n = \frac{n^2 \pi^2}{2a^2} . \end{equation}$$</p>
+				</div>
+				<p>We can just arbitrarily call our units of $x$ to be length from $0$ to $a$.</p>
 				<p>These units are nice because they give the constants an appropriate order of magnitude (I invite you to check out these constants in <a href="https://en.wikipedia.org/wiki/List_of_physical_constants" target="_blank">SI units</a>), but it took me an incredibly long time to figure out the correct unit system and I experienced an endless amount of issues as a consequence. For the infinite well problem, defining all of these units correctly isn't a big deal because there is only one constant term in the differential equation, but these definitions become very important for differential equations that contain multiple fundamental constants.</p>
 				<p>Next, we need to generate input data. This is easy, let $a=1$ and simply generate values of $x$ between $0$ and $a$. In practice, I generated $x$ values in steps of $0.01$. During training, all $x$ are perturbed by a small amount of noise and then passed into the PINN. The perturbation of inputs prevents the model from overfitting.</p>
 				<p>Note that we haven't generated a set of collocation and boundary condition data like in the original PINNs paper. I opted to just use collocation data and scale the PINN predictions to $0$ at the boundaries using the parametric scaling function presented in the quantum eigenvalue paper,</p>
