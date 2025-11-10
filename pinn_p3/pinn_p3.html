@@ -22,6 +22,7 @@
 				<hr>
 			</div>
 			<div class="main-text-container">
+				<p><b><mark>NOTE very incomplete rough draft</mark></b></p>
 				<p>As described in <a href="../pinn_p2/pinn_p2.html" target="_blank">Part 2</a>, an atom consists of a nucleus and electron(s). The Hydrogen atom has one electron and we will apply the Schrodinger equation to that electron. I will then use a PINN to solve the equation.</p>
 				<br>
 				<h3>The Hydrogen atom Schrodinger equation</h3>
@@ -158,8 +159,130 @@
 					<div>$n=3$ predictions and analytical solution.</div>
 				</div>
 				<br>
-				<p>The PINN's predicted solutions attain $L_f$ values on the order of $10^{-4}$ to $10^{-3}$ and MSE values of $10^{-5}$ to $10^{-1}. I believe better accuracy could be obtained with more training steps, but again, this was just a spot check to see if I had my units system defined correctly. My main focus is getting a PINN to solve the 3D equation.</p>
-				<p><b>TODO</b> use 1D radial PINN as spot check on units + other setup details (maybe just fit first 3 solns w no scan and present them as being done just to check that pinn can find solns w these units correctly)</p>
+				<p>The PINN's predicted solutions attain $L_f$ values on the order of $10^{-4}$ to $10^{-3}$ and MSE values of $10^{-5}$ to $10^{-1}$. I believe better accuracy could be obtained with more training steps, but again, this was just a spot check to see if I had my units system defined correctly. My main focus is getting a PINN to solve the 3D equation.</p>
+				<p>The code implementation for this problem can be found in <a href="https://github.com/kyler-harrison/Schrodinger-PINNs/blob/main/1D_H/H_1D_radial_eqn.ipynb" target="_blank">this repo</a>.</p>
+				<br>
+				<h3>Implementing a PINN to solve the full 3D equation</h3>
+				<p>Although the analytical solution is found in spherical coordinates, I trained the PINN to learn to solve the cartesian form of the Hydrogen Schrodinger equation. Qualitatively, the cartesian form <i>just looks easier</i>, and more importantly, I couldn't get a PINN to converge to good results on the spherical form, but I could get good results using the cartesian form.</p>
+				<p>From the Schrodinger equation, we can write</p>
+				<div class="eqn-box">
+					<p>$$\begin{eqnarray} f = E \psi  + \frac{\hbar^2}{2m} \left(\frac{\partial^2 \psi}{\partial x^2} + \frac{\partial^2 \psi}{\partial y^2} + \frac{\partial^2 \psi}{\partial z^2} \right) + \frac{e^2}{4 \pi \varepsilon_0 \sqrt{x^2+y^2+z^2}}\psi . \end{eqnarray}$$</p>
+				</div>
+				<p>Once again, I encountered issues with handling boundary conditions with the parametric scaling function, so I went back to defining collocation and boundary condition sets of data.</p>
+				<p>In the infinite well problem, I modeled 3D space with a cube of data. I experimented with generating a sphere of data for this problem since the known analytical solution is spherical. The PINN was able to learn correct solutions on data generated as a cube and a sphere, but I ultimately decided that the sphere data gave better results because the distribution of generated radii included more relevant points.</p>
+				<p>The sphere of data included 20,480 data points (90% in collocation, 10% in b.c.).</p>
+				<div class="img-container">
+					<img src="assets/coll_sphere.png">
+					<br>
+					<div>Sphere of collocation training data.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="assets/bc_sphere.png">
+					<br>
+					<div>Sphere of boundary condition training data.</div>
+				</div>
+				<br>
+				<p>Using a sphere of data requires a change in the calculation of the prediction normalization constant. The calculation follows the same logic as previous prediction normalization constant calculations, but approximates a 3D integral in spherical coordinates instead. This change makes the calculation a little trickier, but it's still manageable.</p>
+				<p>First, the normalization condition says that</p>
+				<div class="eqn-box">
+					<p>$$\begin{eqnarray} \int_0^{\pi} \int_0^{2\pi} \int_0^{\infty} | \psi |^2 r^2 sin\theta drd\theta d\phi &=& 1 .\end{eqnarray}$$</p>
+				</div>
+				<p>We approximate the integral with dimensional small steps of $\delta_r$, $\delta_{\theta}$, $\delta_{\phi}$,</p>
+				<div class="eqn-box">
+					<p>$$\begin{eqnarray} \sum_{\phi=0}^{\pi} \sum_{\theta=0}^{2\pi} \sum_{r=0}^{r_{max}} | \psi |^2 r^2 sin\theta \delta_r \delta_{\theta} \delta_{\phi} &\approx& 1. \end{eqnarray}$$</p>
+				</div>
+				<p>Making the assumption that</p>
+				<div class="eqn-box">
+					<p>$$\begin{eqnarray} \psi = c \hat{\psi} , \end{eqnarray}$$</p>
+				</div>
+				<p>we find that the prediciton normalization constant is</p>
+				<div class="eqn-box">
+					<p>$$\begin{eqnarray} c = \frac{1}{\sqrt{\sum_{\phi=0}^{\pi} \sum_{\theta=0}^{2\pi} \sum_{r=0}^{r_{max}} | \hat{\psi} |^2 r^2 sin\theta \delta_r \delta_{\theta} \delta_{\phi}}}. \end{eqnarray}$$</p>
+				</div>
+				<p>This constant depends on $r$ and $\theta$, whereas the 3D infinite well problem only depended on fixed step sizes in $x$, $y$, and $z$. In practice, this just means that the input $r$ and $\theta$ for each prediction $\hat{\psi}$ are needed.</p>
+				<p>The overall loss was again defined as</p>
+				<div class="eqn-box">
+					<p>$$\begin{eqnarray} L_{ovr} = L_f + L_{bc} + L_{trivial}.\end{eqnarray}$$</p>
+				</div>
+				<p>The "correctness" of each PINN is defined by the loss without the non-trivial loss term ("loss_ovr_no_reg" in the plot below)</p>
+				<div class="eqn-box">
+					<p>$$\begin{eqnarray} L = L_f + L_{bc} .\end{eqnarray}$$</p>
+				</div>
+				<p>I trained this PINN to search over the first three analytical $E$ values. I searched across three values for each $E$ and saved the three best PINNs.</p>
+				<div class="img-container">
+					<img src="assets/l_ovr_no_reg.png">
+					<br>
+					<div>$L$ across training.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="assets/l_f.png">
+					<br>
+					<div>$L_f$ across training.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="assets/l_bc.png">
+					<br>
+					<div>$L_{bc}$ across training.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="assets/E.png">
+					<br>
+					<div>$E$ across training.</div>
+				</div>
+				<br>
+				<p>As I'd hoped, the best PINN convergence occurred when the correct analytical $E$ values were used as inputs: $E_1=-0.5$, $E_2=-0.125$, $E_3=-0.056$. Although the best PINNs used the correct $E$ values, the difference between $L$ across the adjacent $E$ values is not very significant (only an order of magnitude for each PINN).</p>
+				<p>To visualize the solutions, I plot the square of the wavefunction's magnitude (effectively the probability density), $|\hat{\psi}(x, y, z)|^2$, for each $x$, $y$, $z$ in the sphere of data. I also cut a slice of the sphere away so you can see the distribution of predictions. The PINN can only converge to one of potentially many degenerate solutions for each energy level, so I pair the predictions up with the corresponding $nlm$ degenerate analytical solution below.</p>
+				<div class="img-container">
+					<img src="assets/n=1_pred.png">
+					<br>
+					<div>$n=1$ predictions.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="assets/n=1_an.png">
+					<br>
+					<div>$nlm=100$ analytical solution.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="assets/n=2_pred.png">
+					<br>
+					<div>$n=2$ predictions.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="assets/n=2_an.png">
+					<br>
+					<div>$nlm=200$ analytical solution.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="assets/n=3_pred.png">
+					<br>
+					<div>$n=3$ predictions.</div>
+				</div>
+				<br>
+				<br>
+				<div class="img-container">
+					<img src="assets/n=3_an.png">
+					<br>
+					<div>$nlm=320$ analytical solution.</div>
+				</div>
+				<br>
+				<br>
+				<p><b>TODO</b> discussion of results, finalized code, next steps</p>
 				<br>
             </div>
 		</div>
