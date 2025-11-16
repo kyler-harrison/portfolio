@@ -160,16 +160,16 @@
 				</div>
 				<br>
 				<p>The PINN's predicted solutions attain $L_f$ values on the order of $10^{-4}$ to $10^{-3}$ and MSE values of $10^{-5}$ to $10^{-1}$. I believe better accuracy could be obtained with more training steps, but again, this was just a spot check to see if I had my units system defined correctly. My main focus is getting a PINN to solve the 3D equation.</p>
-				<p>The code implementation for this problem can be found in <a href="https://github.com/kyler-harrison/Schrodinger-PINNs/blob/main/1D_H/H_1D_radial_eqn.ipynb" target="_blank">this repo</a>.</p>
+				<p>The code implementation for this problem can be found in <a href="https://github.com/kyler-harrison/Schrodinger-PINNs/blob/main/1D_H/1D_H_radial.ipynb" target="_blank">this repo</a>.</p>
 				<br>
 				<h3>Implementing a PINN to solve the full 3D equation</h3>
-				<p>Although the analytical solution is found in spherical coordinates, I trained the PINN to learn to solve the cartesian form of the Hydrogen Schrodinger equation. Qualitatively, the cartesian form <i>just looks easier</i>, and more importantly, I couldn't get a PINN to converge to good results on the spherical form, but I could get good results using the cartesian form.</p>
+				<p>Although the analytical solution is found in spherical coordinates, I trained the PINN to learn to solve the cartesian form of the Hydrogen Schrodinger equation. Qualitatively, the cartesian form <i>just looks easier</i>, and more importantly, I couldn't get a PINN to converge to good results on the spherical form, but I could get good results using the cartesian form. After much thought, I still don't know why I can't get the PINN to converge on both forms.</p>
 				<p>From the Schrodinger equation, we can write</p>
 				<div class="eqn-box">
 					<p>$$\begin{eqnarray} f = E \psi  + \frac{\hbar^2}{2m} \left(\frac{\partial^2 \psi}{\partial x^2} + \frac{\partial^2 \psi}{\partial y^2} + \frac{\partial^2 \psi}{\partial z^2} \right) + \frac{e^2}{4 \pi \varepsilon_0 \sqrt{x^2+y^2+z^2}}\psi . \end{eqnarray}$$</p>
 				</div>
-				<p>Once again, I encountered issues with handling boundary conditions with the parametric scaling function, so I went back to defining collocation and boundary condition sets of data.</p>
-				<p>In the infinite well problem, I modeled 3D space with a cube of data. I experimented with generating a sphere of data for this problem since the known analytical solution is spherical. The PINN was able to learn correct solutions on data generated as a cube and a sphere, but I ultimately decided that the sphere data gave better results because the distribution of generated radii included more relevant points.</p>
+				<p>Once again, I encountered issues when handling boundary conditions with the parametric scaling function, so I went back to defining collocation and boundary condition sets of data.</p>
+				<p>In the infinite well problem, I modeled 3D space with a cube of data. I experimented with generating a sphere of data for the H Schrodinger since the known analytical solution is spherical. The PINN was able to learn correct solutions on data generated as a cube and a sphere, but I ultimately decided that the sphere data gave better results because the distribution of generated radii included more relevant points.</p>
 				<p>The sphere of data included 20,480 data points (90% in collocation, 10% in b.c.).</p>
 				<div class="img-container">
 					<img src="assets/coll_sphere.png">
@@ -201,7 +201,7 @@
 				<div class="eqn-box">
 					<p>$$\begin{eqnarray} c = \frac{1}{\sqrt{\sum_{\phi=0}^{\pi} \sum_{\theta=0}^{2\pi} \sum_{r=0}^{r_{max}} | \hat{\psi} |^2 r^2 sin\theta \delta_r \delta_{\theta} \delta_{\phi}}}. \end{eqnarray}$$</p>
 				</div>
-				<p>This constant depends on $r$ and $\theta$, whereas the 3D infinite well problem only depended on fixed step sizes in $x$, $y$, and $z$. In practice, this just means that the input $r$ and $\theta$ for each prediction $\hat{\psi}$ are needed.</p>
+				<p>This constant depends on $r$, $\theta$, and $\hat{\psi}$, whereas the 3D infinite well problem only depended on $\hat{\psi}$ and fixed step sizes in $x$, $y$, and $z$. In practice, this just means that the input $r$ and $\theta$ for each prediction $\hat{\psi}$ are needed. It took me way too long to realize this.</p>
 				<p>The overall loss was again defined as</p>
 				<div class="eqn-box">
 					<p>$$\begin{eqnarray} L_{ovr} = L_f + L_{bc} + L_{trivial}.\end{eqnarray}$$</p>
@@ -282,7 +282,13 @@
 				</div>
 				<br>
 				<br>
-				<p><b>TODO</b> discussion of results, finalized code, next steps</p>
+				<p>Qualitatively, the PINN was able to find solutions whose probability densities look similar to the analytical solutions. The best models attained $L$ values on the order of $10^{-2}$. Interestingly, the ground state model learned the boundary conditions the best with an $L_{bc}$ on the order of $10^{-5}$, while the $n=2$ and $n=3$ PINNs reached an order of $10^{-4}$. All PINNs attained an $L_f$ on the order of $10^{-2}$, which dominated their resulting total $L$. It looks as though these PINNs were able to find the correct solution at the boundary conditions with relative ease, but were not able to fit the rest of the wavefunction as accurately. Intuitively, this makes sense because the wavefunction at the boundary conditions is always 0, an easy value to memorize.</p>
+				<p>This approach has its limitations. For each successive (higher energy) solution to the Hydrogen atom Schrodinger equation, the probability of the particle existing farther away from the nucleus increases, meaning a greater radius is needed to see the entire non-trivial part of the wavefunction. This presents a challenge in data generation. I generated a sphere of data with a maximum radius of 20. For the $n=1$ solution, points outside of the radius ~6 are mostly trivial and do not display any "meaningful" behavior for the PINN to learn. On the other hand, the $n=3$ wavefunction has non-trivial features up to a radius of ~15. I could have generated different size spheres for each PINN energy level to combat this issue, but I instead stuck to a single set of data with a fixed sphere size.</p>
+				<p>For the PINN approach to be useful for solving hard differential equations, it must be able to solve the problem given a limited number of constraints. Knowing that a larger sphere of data is needed to described the higher energy solutions requires knowlwedge about the analytical solution. For unsolved problems, this knowledge might not be available and assumptions would have to be made about the system modeled by the PINN. The assumptions required with my $E$ scan algorithm are the biggest weakness to this PINN approach. Ideally, the PINN could find $E$ and the wavefunction on its own, and the $E$ scan wouldn't be needed. Of course, the PINN's ability to learn is still limited by the assumptions formed when generating data for training. And once again, the $E$ scan algorithm is also limited by the amount of time you'd like to spend searching over $E$ values. Training PINNs on a wide, fine-grain range of $E$ values takes considerable time and cost (if you don't have a cool GPU cluster and a lot of money, that is. OpenAI could probably scan thousands of $E$ values in a few minutes).</p>
+				<p>My code implementation for this problem can be found in <a href="https://github.com/kyler-harrison/Schrodinger-PINNs/blob/main/3D_H/3D_H_cartesian.ipynb" target="_blank">this repo</a>.</p>
+				<br>
+				<h3>Next steps</h3>
+				<p>I've claimed that this approach has limitations with scaling into harder problems that require actual assumptions. To test the effectiveness of this PINN approach, I'm now going to apply it to the Helium atom Schrodinger equation. This equation does not have an analytical solution and requires using a numerical integration to approximate the wavefunction. It's not going to be easy and I don't know if I'll be able to get a PINN to learn anything meaningful, but I'm going to try nonetheless. See you in several weeks.</p>
 				<br>
             </div>
 		</div>
